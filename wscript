@@ -10,7 +10,7 @@ VERSION = '0.0.1'
 APPNAME = 'fish_in_ring'
 
 srcdir = '.'
-incdir = 'include/'
+incdir = 'src/'
 blddir = 'build'
 
 from waflib.Build import BuildContext
@@ -55,6 +55,6 @@ def configure(conf):
 
 def build(bld):
     bld.program(features = 'cxx',
-        source='src/fish_in_ring.cpp',
+        source='src/examples/fish_in_ring.cpp',
         uselib = 'BOOST EIGEN',
         target='fish_in_ring')
