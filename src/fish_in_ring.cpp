@@ -1,6 +1,6 @@
-#include <fish.hpp>
-#include <fish_in_ring_sim.hpp>
+#include <fish/fish_base.hpp>
 #include <iostream>
+#include <simulation/fish_in_ring_sim.hpp>
 
 struct Params {
     struct fish_in_ring {
@@ -24,7 +24,7 @@ struct Params {
 
 int main()
 {
-    sim::FishInRing<Params, agent::Fish<Params>> fish_in_ring;
+    sim::FishInRing<Params, agent::FishBase<Params>> fish_in_ring;
     //    fish_in_ring.spin_once();
     fish_in_ring.spin();
     return 0;

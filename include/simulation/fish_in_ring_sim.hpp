@@ -1,9 +1,9 @@
 #ifndef FISH_IN_RING_SIM_HPP
 #define FISH_IN_RING_SIM_HPP
 
-#include <random_generator.hpp>
-#include <simulation.hpp>
-#include <types.hpp>
+#include <random/random_generator.hpp>
+#include <simulation/simulation.hpp>
+#include <types/types.hpp>
 
 #include <boost/range.hpp>
 #include <boost/range/algorithm_ext.hpp>

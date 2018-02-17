@@ -7,8 +7,8 @@
 
 namespace tools {
 
-    std::random_device random_device_;
-    std::mt19937 mt(random_device_());
+    static std::random_device random_device_;
+    static std::mt19937 mt(random_device_());
 
     template <typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
     T random_in_range(T lower_bound, T upper_bound)
