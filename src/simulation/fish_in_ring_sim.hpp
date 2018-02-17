@@ -16,9 +16,9 @@
 #include <vector>
 
 namespace sim {
-    template <typename Params, typename FishType> class FishInRing : public SimulatorBase<Params> {
+    template <typename Params, typename FishType, typename Stat = stat::StatBase<Params>>
+    class FishInRing : public SimulatorBase<Params, Stat> {
     public:
-        using base_type = SimulatorBase<Params>;
         FishInRing()
             : num_agents_(Params::fish_in_ring::num_fish + Params::fish_in_ring::num_robot),
               cell_degree_(360.0 / Params::fish_in_ring::num_cells),
@@ -35,6 +35,8 @@ namespace sim {
 
         void spin_once() override
         {
+            this->update_stats(this);
+
             using namespace types;
             for (size_t i = 0; i < num_agents_; ++i) {
                 // calculate the neighborhoods according to the agent's heading
@@ -102,6 +104,8 @@ namespace sim {
                     f.position() = (f.position() + f.heading()) % static_cast<int>(Params::fish_in_ring::num_cells);
             });
         }
+
+        const std::vector<FishType>& fish() const { return fish_; }
 
     private:
         std::vector<size_t> find_neighbors(int neighborhood, size_t self) const

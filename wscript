@@ -55,6 +55,6 @@ def configure(conf):
 
 def build(bld):
     bld.program(features = 'cxx',
-        source='src/examples/fish_in_ring.cpp',
+        source='src/examples/ring_example.cpp',
         uselib = 'BOOST EIGEN',
         target='fish_in_ring')
