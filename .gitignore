@@ -1,6 +1,8 @@
 build/
 *.dat
 .idea/
+
+# project specific
 sim_*
 
 # Prerequisites
@@ -46,3 +48,4 @@ fish_in_ring.includes
 # waf
 .*waf*
 *.pyc
+__pycache__
