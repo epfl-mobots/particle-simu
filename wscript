@@ -31,7 +31,7 @@ def configure(conf):
     conf.load('boost')
 
     conf.check_eigen()
-    conf.check_boost()
+    conf.check_boost(lib='regex system filesystem', min_version='1.46')
     conf.env.append_value('INCLUDES', [incdir])
 
     # we want C++11
@@ -56,5 +56,5 @@ def configure(conf):
 def build(bld):
     bld.program(features = 'cxx',
         source='src/examples/ring_example.cpp',
-        uselib = 'BOOST EIGEN',
+        uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
         target='fish_in_ring')
