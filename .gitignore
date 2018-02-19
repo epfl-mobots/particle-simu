@@ -1,5 +1,7 @@
 build/
 *.dat
+.idea/
+sim_*
 
 # Prerequisites
 *.d

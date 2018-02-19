@@ -1,6 +1,8 @@
 #ifndef SIMULATION_HPP
 #define SIMULATION_HPP
 
+#include <tools/tools.hpp>
+
 #include <boost/fusion/include/for_each.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/mpl.hpp>
@@ -33,7 +35,11 @@ namespace sim {
 
     public:
         SimulatorBase()
-            : sim_time_(Params::simulation::sim_time), stats_enabled_(Params::simulation::stats_enabled), iteration_(0)
+            : sim_time_(Params::simulation::sim_time),
+              stats_enabled_(Params::simulation::stats_enabled),
+              iteration_(0),
+              sim_start_stamp_(tools::timestamp()),
+              res_dir_(tools::create_folder("sim_" + sim_start_stamp_))
         {
         }
 
@@ -49,6 +55,8 @@ namespace sim {
         uint64_t sim_time() const { return sim_time_; }
         bool stats_enabled() const { return stats_enabled_; }
         bool& stats_enabled() { return stats_enabled_; }
+        const std::string sim_start_stamp() const { return sim_start_stamp_; }
+        const std::string res_dir() const { return res_dir_.c_str(); }
 
     protected:
         template <typename Simu> void update_stats(const Simu& s)
@@ -63,6 +71,8 @@ namespace sim {
         bool stats_enabled_;
         int iteration_;
         stat_t stat_;
+        const std::string sim_start_stamp_;
+        const boost::filesystem::path res_dir_;
     };
 } // namespace sim
 

@@ -21,7 +21,8 @@ namespace stat {
         template <typename Simu> void _create_log_file(const Simu& s, const std::string& filename)
         {
             if (!log_file_ && s->stats_enabled()) {
-                log_file_ = std::make_shared<std::ofstream>(filename.c_str());
+                std::string abs_path = s->res_dir() + "/" + filename.c_str();
+                log_file_ = std::make_shared<std::ofstream>(abs_path);
                 assert(log_file_->good());
             }
         }
