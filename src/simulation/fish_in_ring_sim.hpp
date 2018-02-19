@@ -95,7 +95,7 @@ namespace sim {
                     if (!obey)
                         f.heading() = reverse_heading(f.heading());
                 }
-                // for now robotic fish retain their heading
+                // for now robotic fish will explicitly stick to their heading
 
                 bool move;
                 (f.is_robot()) ? (move = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::prob_move)
@@ -106,6 +106,7 @@ namespace sim {
         }
 
         const std::vector<FishType>& fish() const { return fish_; }
+        size_t num_agents() const { return num_agents_; }
 
     private:
         std::vector<size_t> find_neighbors(int neighborhood, size_t self) const
