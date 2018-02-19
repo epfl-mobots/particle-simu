@@ -2,6 +2,7 @@
 #include <iostream>
 #include <simulation/fish_in_ring_sim.hpp>
 
+#include <stat/fish_in_ring_params_stat.hpp>
 #include <stat/heading_stat.hpp>
 #include <stat/polarity_stat.hpp>
 #include <stat/position_stat.hpp>
@@ -28,8 +29,8 @@ struct Params {
 
 int main()
 {
-    using stat_t
-        = boost::fusion::vector<stat::PositionStat<Params>, stat::HeadingStat<Params>, stat::PolarityStat<Params>>;
+    using stat_t = boost::fusion::vector<stat::PositionStat<Params>, stat::HeadingStat<Params>,
+        stat::PolarityStat<Params>, stat::FishInRingParamsStat<Params>>;
     sim::FishInRing<Params, agent::FishBase<Params>, stat_t> fish_in_ring;
     //    fish_in_ring.spin_once();
     fish_in_ring.spin();

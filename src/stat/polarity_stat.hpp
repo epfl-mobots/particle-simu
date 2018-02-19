@@ -30,7 +30,6 @@ namespace stat {
             (*this->log_file_) << std::setprecision(8) << polarity << std::endl;
         }
     };
-
 } // namespace stat
 
 #endif
