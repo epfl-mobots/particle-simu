@@ -4,12 +4,10 @@ from termcolor import colored
 import os, errno
 import argparse
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
-from printtools import *
+from plot_polarities import plot_polarities
 
-sns.set_style("darkgrid")
 
 params_parser = {
     ('simulation', 'time'): ['sim_time', int],
@@ -80,7 +78,7 @@ def plot_ring(data, args=[]):
             os.makedirs(pdirectory)
         except OSError as e:
             if e.errno == errno.EEXIST:
-                print(colored('Could not create directory for plot output', 'yellow'))
+                print(colored('Skipping directory creation (already exists)', 'yellow'))
 
     fig = plt.figure(figsize=[8, 6], dpi=args.dpi)
     if args and args.with_video:
@@ -124,14 +122,8 @@ def plot_ring(data, args=[]):
         plt.clf()
     if args and args.with_video:
         vwriter.finish()
-    plt.figure(figsize=[8, 6], dpi=args.dpi)
-    plt.plot(polarities[1, :], '.-')
-    plt.ylim('Time')
-    plt.ylabel('Proportion Clockwise')
-    if not args.hide_plot:
-        plt.show()
-    if args and args.png:
-        plt.savefig(pdirectory + '/polarities.png', dpi=args.dpi)
+
+    plot_polarities(polarities, args)
 
 
 if __name__ == '__main__':
