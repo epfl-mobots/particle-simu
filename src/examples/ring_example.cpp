@@ -1,11 +1,11 @@
-#include <fish/fish_base.hpp>
-#include <iostream>
+#include <fish/zebrafish.hpp>
 #include <simulation/fish_in_ring_sim.hpp>
-
 #include <stat/fish_in_ring_params_stat.hpp>
 #include <stat/heading_stat.hpp>
 #include <stat/polarity_stat.hpp>
 #include <stat/position_stat.hpp>
+
+#include <iostream>
 
 struct Params {
     struct fish_in_ring {
@@ -18,7 +18,7 @@ struct Params {
         static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
 
         static constexpr float prob_obedience = 0.9f;
-        static constexpr float prob_stay = 0.9f;
+        static constexpr float prob_stay = 0.901f;
         static constexpr float prob_move = 1;
     };
 
@@ -31,7 +31,7 @@ int main()
 {
     using stat_t = boost::fusion::vector<stat::PositionStat<Params>, stat::HeadingStat<Params>,
         stat::PolarityStat<Params>, stat::FishInRingParamsStat<Params>>;
-    sim::FishInRing<Params, agent::FishBase<Params>, stat_t> fish_in_ring;
+    sim::FishInRing<Params, fish::Zebrafish<Params>, stat_t> fish_in_ring;
     //    fish_in_ring.spin_once();
     fish_in_ring.spin();
     return 0;

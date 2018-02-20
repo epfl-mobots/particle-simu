@@ -143,7 +143,7 @@ if __name__ == '__main__':
                         help='frame rate for the video output')
     parser.add_argument('--dpi',
                         type=int,
-                        default=200,
+                        default=100,
                         help='dpi for the plot and video output')
     parser.add_argument('--png',
                         action='store_true',
