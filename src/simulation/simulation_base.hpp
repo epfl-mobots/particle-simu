@@ -1,5 +1,5 @@
-#ifndef SIMULATION_HPP
-#define SIMULATION_HPP
+#ifndef SIMULATION_BASE_HPP
+#define SIMULATION_BASE_HPP
 
 #include <tools/tools.hpp>
 
@@ -27,14 +27,14 @@ namespace sim {
         const Simu& simu_;
     };
 
-    template <typename Params, typename Stat> class SimulatorBase {
+    template <typename Params, typename Stat> class SimulationBase {
 
-        using base_type = SimulatorBase<Params, Stat>;
+        using base_type = SimulationBase<Params, Stat>;
         using stat_t =
             typename boost::mpl::if_<boost::fusion::traits::is_sequence<Stat>, Stat, boost::fusion::vector<Stat>>::type;
 
     public:
-        SimulatorBase()
+        SimulationBase()
             : sim_time_(Params::simulation::sim_time),
               stats_enabled_(Params::simulation::stats_enabled),
               iteration_(0),

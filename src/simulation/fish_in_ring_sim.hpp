@@ -2,7 +2,7 @@
 #define FISH_IN_RING_SIM_HPP
 
 #include <random/random_generator.hpp>
-#include <simulation/simulation.hpp>
+#include <simulation/simulation_base.hpp>
 #include <types/types.hpp>
 
 #include <algorithm>
@@ -13,7 +13,7 @@
 
 namespace sim {
     template <typename Params, typename FishType, typename Stat = stat::StatBase<Params>>
-    class FishInRing : public SimulatorBase<Params, Stat> {
+    class FishInRing : public SimulationBase<Params, Stat> {
     public:
         FishInRing()
             : num_agents_(Params::fish_in_ring::num_fish + Params::fish_in_ring::num_robot),
