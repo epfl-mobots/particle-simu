@@ -8,10 +8,11 @@
 namespace tools {
     std::string timestamp()
     {
-        boost::posix_time::ptime local_time = boost::posix_time::second_clock::local_time();
-        return std::to_string(local_time.date().year()) + std::to_string(local_time.date().day())
-            + std::to_string(local_time.date().month()) + std::to_string(local_time.time_of_day().hours())
-            + std::to_string(local_time.time_of_day().minutes()) + std::to_string(local_time.time_of_day().seconds());
+        char date[30];
+        time_t date_time;
+        time(&date_time);
+        strftime(date, 30, "%Y-%m-%d_%H_%M_%S", localtime(&date_time));
+        return std::string(date);
     }
 
     boost::filesystem::path create_folder(const std::string folder_name)
