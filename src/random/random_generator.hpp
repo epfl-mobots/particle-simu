@@ -24,6 +24,13 @@ namespace tools {
         return distribution(mt);
     }
 
+    template <typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
+    T normal_random_in_range(T lower_bound, T upper_bound)
+    {
+        std::normal_distribution<T> distribution(lower_bound, upper_bound);
+        return distribution(mt);
+    }
+
     int8_t random_sgn()
     {
         if (random_in_range(0, 1) == 0)

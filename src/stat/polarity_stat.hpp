@@ -19,12 +19,12 @@ namespace stat {
                 (*this->log_file_) << "#iteration polarity" << std::endl;
 
             size_t num_agents = s->num_agents();
-            int sum_heading = 0;
+            float sum_heading = 0.0f;
             const auto& fish = s->fish();
             for (const auto& f : fish)
-                sum_heading += static_cast<int>(f.heading());
+                sum_heading += static_cast<float>(f.heading());
             sum_heading = std::abs(sum_heading);
-            double polarity = sum_heading / static_cast<double>(num_agents);
+            float polarity = sum_heading / static_cast<float>(num_agents);
 
             (*this->log_file_) << s->iteration() << " ";
             (*this->log_file_) << std::setprecision(8) << polarity << std::endl;

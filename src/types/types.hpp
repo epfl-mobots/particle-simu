@@ -6,7 +6,7 @@
 #include <string>
 
 namespace types {
-    enum Heading : int8_t { UNDEFINED = 0, CLOCKWISE = -1, COUNTER_CLOCKWISE = 1 };
+    enum Heading : int { UNDEFINED = 0, CLOCKWISE = -1, COUNTER_CLOCKWISE = 1 };
     std::string to_str(Heading heading)
     {
         switch (heading) {
@@ -24,7 +24,7 @@ namespace types {
     {
         if (candidate == 0)
             return Heading::UNDEFINED;
-        else if (std::signbit(candidate))
+        else if (candidate < 0)
             return Heading::CLOCKWISE;
         else
             return Heading::COUNTER_CLOCKWISE;

@@ -2,7 +2,7 @@
 clear variables
 
 %%%%% Parameters of the simulation %%%%%
-plot_simulation = true; % Bolean to plot or not the simulation
+plot_simulation = false; % Bolean to plot or not the simulation
 N_fish = 5; % Number of fish
 N_robot = 1; % Number of robot
 deg_vision = 120; % determine the vision in the ring of the agents in degree (120 => they can see 1/3 of the ring in front of them)
