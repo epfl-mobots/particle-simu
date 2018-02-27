@@ -15,7 +15,7 @@ struct Params {
         static constexpr int max_neighbors = 3;
         static constexpr size_t num_cells = 40;
         static constexpr int deg_vision = 120;
-        static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
+        static constexpr types::Heading heading_robot = types::Heading::COUNTER_CLOCKWISE;
 
         static constexpr float prob_obedience = 0.9f;
         static constexpr float prob_stay = 0.901f;

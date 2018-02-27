@@ -66,7 +66,7 @@ def plot_proportion_heading(data, args):
     num_agents = num_robots + num_fish
 
     headings = data['headings'][:, 1:]
-    proportion_hdg = np.sum(np.where(headings == Heading[args.heading], 1, 0), 1) / num_agents
+    proportion_hdg = np.float64(np.sum(np.where(headings == Heading[args.heading], 1, 0), 1)) / num_agents
 
     plt.figure(figsize=[8, 6], dpi=args.dpi)
     plt.plot(proportion_hdg, '.-')
