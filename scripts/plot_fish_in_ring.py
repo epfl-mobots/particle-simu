@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from termcolor import colored
-import os, errno
+import os, errno, sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -154,5 +154,5 @@ if __name__ == '__main__':
         data = read_data(args.path)
         print('Plotting simulation results with parameters:\n')
         for l in data['params'][1]:
-            print(l, end='')
+            sys.stdout.write(l)
         plot_ring(data, args)
