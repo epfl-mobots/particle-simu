@@ -7,10 +7,12 @@
 
 #include <iostream>
 
+using namespace samsar;
+
 struct Params {
     struct fish_in_ring {
-        static constexpr size_t num_fish = 5;
-        static constexpr size_t num_robot = 1;
+        static constexpr size_t num_fish = 6;
+        static constexpr size_t num_robot = 0;
 
         static constexpr int max_neighbors = 3;
         static constexpr size_t num_cells = 40;
@@ -19,7 +21,10 @@ struct Params {
 
         static constexpr float prob_obedience = 0.9f;
         static constexpr float prob_stay = 0.901f;
-        static constexpr float prob_move = 1;
+        static constexpr float prob_move = 1.0f;
+
+        static constexpr size_t group_threshold = 3;
+        static constexpr float social_influence = 1.0f;
     };
 
     struct simulation : defaults::simulation {
