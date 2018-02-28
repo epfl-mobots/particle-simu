@@ -48,7 +48,7 @@ This project uses the [Waf build system](http://www.waf.io).
 #### Run a simulation
 
 ```shell
-./build/fish_in_ring
+./build/ring_example
  ```
 
  After each run, a timestamped folder containing the simulation results will be created in the root project directory.

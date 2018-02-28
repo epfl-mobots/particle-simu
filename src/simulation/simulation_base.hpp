@@ -12,16 +12,15 @@
 #include <stat/stat_base.hpp>
 #include <string>
 
-namespace defaults {
-    struct simulation {
-        static constexpr uint64_t sim_time = 1000;
-        static constexpr bool stats_enabled = true;
-    };
-} // namespace defaults
-
 namespace samsar {
-    namespace sim {
+    namespace defaults {
+        struct simulation {
+            static constexpr uint64_t sim_time = 1000;
+            static constexpr bool stats_enabled = true;
+        };
+    } // namespace defaults
 
+    namespace sim {
         template <typename Simu> struct RefreshStat {
             RefreshStat(const Simu& s) : simu_(s) {}
             template <typename T> void operator()(T& x) const { x(simu_); }

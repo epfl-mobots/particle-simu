@@ -12,6 +12,22 @@
 #include <vector>
 
 namespace samsar {
+    namespace defaults {
+        struct fish_in_ring {
+            static constexpr size_t num_fish = 5;
+            static constexpr size_t num_robot = 1;
+
+            static constexpr int max_neighbors = 3;
+            static constexpr size_t num_cells = 40;
+            static constexpr int deg_vision = 120;
+            static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
+
+            static constexpr float prob_obedience = 0.9f;
+            static constexpr float prob_stay = 0.901f;
+            static constexpr float prob_move = 1.0f;
+        };
+    } // namespace defaults
+
     namespace sim {
         template <typename Params, typename FishType, typename Stat = stat::StatBase<Params>>
         class FishInRing : public SimulationBase<Params, Stat> {

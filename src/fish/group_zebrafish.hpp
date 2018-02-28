@@ -10,6 +10,15 @@
 #include <boost/range/irange.hpp>
 
 namespace samsar {
+    namespace defaults {
+        struct group_zebrafish {
+            static constexpr size_t group_threshold = 2;
+            static constexpr size_t group_cells_forward = 3;
+            static constexpr size_t group_cells_backward = 3;
+            static constexpr float social_influence = 0.9f;
+        };
+    } // namespace defaults
+
     namespace fish {
         template <typename Params> class GroupZebrafish : public Zebrafish<Params> {
 
@@ -19,9 +28,9 @@ namespace samsar {
         public:
             GroupZebrafish()
                 : in_group_(false),
-                  group_threshold_(Params::fish_in_ring::group_threshold),
-                  group_cells_forward_(Params::fish_in_ring::group_cells_forward),
-                  group_cells_backward_(Params::fish_in_ring::group_cells_backward)
+                  group_threshold_(Params::group_zebrafish::group_threshold),
+                  group_cells_forward_(Params::group_zebrafish::group_cells_forward),
+                  group_cells_backward_(Params::group_zebrafish::group_cells_backward)
             {
             }
 
@@ -48,7 +57,7 @@ namespace samsar {
 
                     if (!this->is_robot()) {
                         bool is_influenced
-                            = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::social_influence;
+                            = tools::random_in_range(0.0f, 1.0f) < Params::group_zebrafish::social_influence;
                         if (!is_influenced)
                             this->heading() = reverse_heading(this->heading());
                         else {
@@ -79,11 +88,12 @@ namespace samsar {
                 base_type_t::calc_intuitions(shoal, num_cells_look);
                 construct_inverted_table(shoal);
                 current_group_ = find_group();
-                (current_group_.size() + 1 >= Params::fish_in_ring::group_threshold) ? in_group_ = true
-                                                                                     : in_group_ = false;
+                (current_group_.size() + 1 >= Params::group_zebrafish::group_threshold) ? in_group_ = true
+                                                                                        : in_group_ = false;
             }
 
             bool in_group() const { return in_group_; }
+            size_t group_size() const { return current_group_.size(); }
 
         private:
             std::vector<GroupZebrafish> find_group() const
