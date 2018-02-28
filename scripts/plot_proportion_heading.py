@@ -5,43 +5,11 @@ import os, errno
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-
+from parsers import parse_fir_params
 
 Heading = {
     'clockwise': -1,
     'counterclockwise': 1}
-
-params_parser = {
-    ('simulation', 'time'): ['sim_time', int],
-    ('number', 'fish'): ['num_fish', int],
-    ('number', 'robots'): ['num_robots', int],
-    ('max', 'neighbors'): ['max_neighbors', int],
-    ('number', 'cells'): ['num_cells', int],
-    ('degrees', 'vision'): ['deg_vision', int],
-    ('robot', 'heading'): ['heading_robot', str],
-    ('probability', 'obey'): ['prob_obedience', float],
-    ('probability', 'stay'): ['prob_stay', float],
-    ('probability', 'move', 'robot'): ['prob_move', float]
-}
-
-
-def parse_fir_params(path):
-    f = open(path + '/fish_in_ring_params.dat')
-    params_str = f.readlines()[1:]
-    f.close()
-
-    params = dict()
-    for l in params_str:
-        val = l.split(':')[1].strip()
-        for kwrds, info in params_parser.items():
-            flag = True
-            for k in kwrds:
-                if k not in l.lower():
-                    flag = False
-                    break
-            if flag:
-                params[info[0]] = info[1](val)
-    return params, params_str
 
 
 def read_data(path):
