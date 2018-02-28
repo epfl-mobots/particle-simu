@@ -29,12 +29,10 @@ namespace samsar {
         };
 
         template <typename Params, typename Stat> class SimulationBase {
-
-            using base_type = SimulationBase<Params, Stat>;
+        public:
             using stat_t = typename boost::mpl::if_<boost::fusion::traits::is_sequence<Stat>, Stat,
                 boost::fusion::vector<Stat>>::type;
 
-        public:
             SimulationBase()
                 : sim_time_(Params::simulation::sim_time),
                   stats_enabled_(Params::simulation::stats_enabled),
@@ -46,11 +44,11 @@ namespace samsar {
 
             virtual void spin()
             {
-                for (uint64_t i = 0; i < sim_time_; ++iteration_, ++i)
+                for (uint64_t i = 0; i < sim_time_; ++i)
                     spin_once();
             }
 
-            virtual void spin_once() = 0;
+            virtual void spin_once() { ++iteration_; }
 
             int iteration() const { return iteration_; }
             uint64_t sim_time() const { return sim_time_; }

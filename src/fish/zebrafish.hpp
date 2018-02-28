@@ -11,8 +11,6 @@ namespace samsar {
     namespace fish {
         template <typename Params> class Zebrafish : public FishBase<Params> {
         public:
-            using zebrafish_type_t = Zebrafish<Params>;
-
             Zebrafish() : next_heading_(Heading::UNDEFINED) {}
 
             void move() override
@@ -42,9 +40,12 @@ namespace samsar {
                 (this->is_robot())
                     ? (move = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::prob_move)
                     : (move = tools::random_in_range(0.0f, 1.0f) < (1 - Params::fish_in_ring::prob_stay));
-                if (move)
+                if (move) {
                     this->position()
                         = (this->position() + this->heading()) % static_cast<int>(Params::fish_in_ring::num_cells);
+                    if (this->position_ < 0)
+                        this->position_ += Params::fish_in_ring::num_cells;
+                }
             }
 
             template <typename Shoal> void calc_intuitions(const Shoal& shoal, size_t num_cells_look)
@@ -97,7 +98,7 @@ namespace samsar {
                 next_heading_ = new_heading;
             }
 
-        private:
+        protected:
             template <typename Shoal>
             std::vector<size_t> find_neighbors(const Shoal& shoal, int neighborhood, size_t self) const
             {

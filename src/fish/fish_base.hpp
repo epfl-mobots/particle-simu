@@ -24,6 +24,7 @@ namespace samsar {
             bool is_robot() const { return is_robot_; }
             void is_robot(bool flag) { is_robot_ = flag; }
             void set_id(int id) { id_ = id; }
+            int id() const { return id_; }
 
         protected:
             Heading heading_;

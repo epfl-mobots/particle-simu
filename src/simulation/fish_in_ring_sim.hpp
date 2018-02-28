@@ -15,6 +15,9 @@ namespace samsar {
     namespace sim {
         template <typename Params, typename FishType, typename Stat = stat::StatBase<Params>>
         class FishInRing : public SimulationBase<Params, Stat> {
+
+            using base_type_t = SimulationBase<Params, Stat>;
+
         public:
             FishInRing()
                 : num_agents_(Params::fish_in_ring::num_fish + Params::fish_in_ring::num_robot),
@@ -40,7 +43,7 @@ namespace samsar {
                 this->update_stats(this);
 
                 // calculate fish intuitions in accordance with the shoal status
-                for (const auto& f : fish_)
+                for (auto& f : fish_)
                     f.calc_intuitions(fish_, num_cells_look_);
 
                 // apply intuitions and move towards the respective heading
@@ -48,6 +51,8 @@ namespace samsar {
                 // position or even move towards the oposite heading of the shoal
                 for (auto& f : fish_)
                     f.move();
+
+                base_type_t::spin_once();
             }
 
             const std::vector<FishType>& fish() const { return fish_; }
