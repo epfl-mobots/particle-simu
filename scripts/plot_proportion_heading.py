@@ -48,7 +48,7 @@ def plot_proportion_heading(data, args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Plot the "Fish in Ring"')
+    parser = argparse.ArgumentParser(description='Plot proportion of time spent in a heading')
     parser.add_argument('path',
                         type=str,
                         help='path to the folder containing the simulation results')

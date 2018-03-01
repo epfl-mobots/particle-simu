@@ -34,7 +34,7 @@ def plot_polarities(polarities, args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Plot the "Fish in Ring"')
+    parser = argparse.ArgumentParser(description='Plot the polarities of the shoal per timestep')
     parser.add_argument('path',
                         type=str,
                         help='path to the folder containing the simulation results')

@@ -5,8 +5,6 @@ import os, errno, sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as manimation
-from plot_polarities import plot_polarities
 from parsers import parse_fir_params, parse_group_params
 import seaborn as sns
 
@@ -47,8 +45,6 @@ def plot_ring(data, args=[]):
             if e.errno == errno.EEXIST:
                 print(colored('Skipping directory creation (already exists)', 'yellow'))
 
-    fig = plt.figure(figsize=[8, 6], dpi=args.dpi)
-
     perc_in_group = np.float64(np.sum(np.where(group_sizes >= group_threshold, 1, 0), 1)) / num_agents
     perc_in_group_per_fish = np.float64(np.sum(np.where(group_sizes >= group_threshold, 1, 0), 0)) / params['sim_time']
 
@@ -57,20 +53,19 @@ def plot_ring(data, args=[]):
     plt.ylim([0, 1])
     plt.xlabel('Time')
     plt.ylabel('Percentage')
-    plt.show()
     if args and args.png:
         plt.savefig(pdirectory + '/group_percentages.png', dpi=args.dpi)
 
     fig = plt.figure(figsize=[8, 6], dpi=args.dpi)
-    pgpf = sns.barplot(x=[1, 2, 3, 4, 5, 6], y=np.float64(perc_in_group_per_fish), palette="muted")
+    pgpf = sns.barplot(x=list(range(num_agents)), y=np.float64(perc_in_group_per_fish), palette="muted")
     pgpf.set_title('Percentage in group per fish')
-    plt.show()
     if args and args.png:
         plt.savefig(pdirectory + '/percentage_in_group_per_fish.png', dpi=args.dpi)
+    plt.show()
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Plot the "Fish in Ring"')
+    parser = argparse.ArgumentParser(description='Plot the percentage of time a fish spends in groups')
     parser.add_argument('path',
                         type=str,
                         help='path to the folder containing the simulation results')
