@@ -25,7 +25,7 @@ namespace samsar {
                     (*this->log_file_) << "Number of cells: " << Params::fish_in_ring::num_cells << std::endl;
                     (*this->log_file_) << "Degrees of vision: " << Params::fish_in_ring::deg_vision << std::endl;
                     (*this->log_file_) << "Robot heading: " << to_str(Params::fish_in_ring::heading_robot) << std::endl;
-                    (*this->log_file_) << "Probability to obey: " << Params::fish_in_ring::prob_obedience << std::endl;
+                    (*this->log_file_) << "Probability to obey: " << Params::fish_in_ring::prob_obey << std::endl;
                     (*this->log_file_) << "Probability to stay in position (fish): " << Params::fish_in_ring::prob_stay
                                        << std::endl;
                     (*this->log_file_) << "Probability to move (robot): " << Params::fish_in_ring::prob_move

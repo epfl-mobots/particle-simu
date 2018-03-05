@@ -30,7 +30,8 @@ namespace samsar {
                 : in_group_(false),
                   group_threshold_(Params::group_zebrafish::group_threshold),
                   group_cells_forward_(Params::group_zebrafish::group_cells_forward),
-                  group_cells_backward_(Params::group_zebrafish::group_cells_backward)
+                  group_cells_backward_(Params::group_zebrafish::group_cells_backward),
+                  social_influence_(Params::group_zebrafish::social_influence)
             {
             }
 
@@ -56,8 +57,7 @@ namespace samsar {
                     this->heading_ = this->next_heading_;
 
                     if (!this->is_robot()) {
-                        bool is_influenced
-                            = tools::random_in_range(0.0f, 1.0f) < Params::group_zebrafish::social_influence;
+                        bool is_influenced = tools::random_in_range(0.0f, 1.0f) < social_influence_;
                         if (!is_influenced)
                             this->heading() = reverse_heading(this->heading());
                         else {
@@ -68,17 +68,15 @@ namespace samsar {
                         }
                     }
                     else
-                        this->heading_ = Params::fish_in_ring::heading_robot;
+                        this->heading_ = this->heading_robot_;
 
                     bool move;
-                    (this->is_robot())
-                        ? (move = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::prob_move)
-                        : (move = tools::random_in_range(0.0f, 1.0f) < (1 - Params::fish_in_ring::prob_stay));
+                    (this->is_robot()) ? (move = tools::random_in_range(0.0f, 1.0f) < this->prob_move_)
+                                       : (move = tools::random_in_range(0.0f, 1.0f) < (1 - this->prob_stay_));
                     if (move) {
-                        this->position()
-                            = (this->position() + this->heading()) % static_cast<int>(Params::fish_in_ring::num_cells);
+                        this->position() = (this->position() + this->heading()) % static_cast<int>(this->num_cells_);
                         if (this->position_ < 0)
-                            this->position_ += Params::fish_in_ring::num_cells;
+                            this->position_ += this->num_cells_;
                     }
                 }
             }
@@ -88,8 +86,7 @@ namespace samsar {
                 base_type_t::calc_intuitions(shoal, num_cells_look);
                 construct_inverted_table(shoal);
                 current_group_ = find_group();
-                (current_group_.size() + 1 >= Params::group_zebrafish::group_threshold) ? in_group_ = true
-                                                                                        : in_group_ = false;
+                (current_group_.size() + 1 >= group_threshold_) ? in_group_ = true : in_group_ = false;
             }
 
             bool in_group() const { return in_group_; }
@@ -109,11 +106,11 @@ namespace samsar {
                 boost::push_back(pos,
                     boost::irange(this->position_ + (-this->heading_ * static_cast<int>(group_cells_backward_)),
                         this->position_, this->heading_));
-                std::for_each(pos.begin(), pos.end(), [](int& v) {
+                std::for_each(pos.begin(), pos.end(), [&](int& v) {
                     if (v < 0)
                         v += Params::fish_in_ring::num_cells;
                     else
-                        v %= static_cast<int>(Params::fish_in_ring::num_cells);
+                        v %= static_cast<int>(this->num_cells_);
                 });
 
                 for (int p : pos) {
@@ -158,6 +155,7 @@ namespace samsar {
             size_t group_threshold_;
             size_t group_cells_forward_;
             size_t group_cells_backward_;
+            float social_influence_;
 
             std::vector<GroupZebrafish> current_group_;
             InvertedFishTable ipos_;

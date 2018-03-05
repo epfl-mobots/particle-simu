@@ -11,7 +11,15 @@ namespace samsar {
     namespace fish {
         template <typename Params> class Zebrafish : public FishBase<Params> {
         public:
-            Zebrafish() : next_heading_(Heading::UNDEFINED) {}
+            Zebrafish() : next_heading_(Heading::UNDEFINED)
+            {
+                num_cells_ = Params::fish_in_ring::num_cells;
+                max_neighbors_ = Params::fish_in_ring::max_neighbors;
+                prob_move_ = Params::fish_in_ring::prob_move;
+                prob_stay_ = Params::fish_in_ring::prob_stay;
+                prob_obey_ = Params::fish_in_ring::prob_obey;
+                heading_robot_ = Params::fish_in_ring::heading_robot;
+            }
 
             void move() override
             {
@@ -26,25 +34,23 @@ namespace samsar {
                 // uncertainty, i.e. the fish might in fact disobey and
                 // move on the opposite heading with prob_obedience probability
                 if (!this->is_robot()) {
-                    bool obey = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::prob_obedience;
+                    bool obey = tools::random_in_range(0.0f, 1.0f) < prob_obey_;
                     if (!obey)
                         this->heading() = reverse_heading(this->heading());
                 }
                 else
                     // for now robotic fish will explicitly stick to their heading
-                    this->heading_ = Params::fish_in_ring::heading_robot;
+                    this->heading_ = heading_robot_;
 
                 // a fish will move to the next position with some uncertainty,
                 // i.e. this means the fish might not move at all
                 bool move;
-                (this->is_robot())
-                    ? (move = tools::random_in_range(0.0f, 1.0f) < Params::fish_in_ring::prob_move)
-                    : (move = tools::random_in_range(0.0f, 1.0f) < (1 - Params::fish_in_ring::prob_stay));
+                (this->is_robot()) ? (move = tools::random_in_range(0.0f, 1.0f) < prob_move_)
+                                   : (move = tools::random_in_range(0.0f, 1.0f) < (1 - prob_stay_));
                 if (move) {
-                    this->position()
-                        = (this->position() + this->heading()) % static_cast<int>(Params::fish_in_ring::num_cells);
+                    this->position() = (this->position() + this->heading()) % static_cast<int>(num_cells_);
                     if (this->position_ < 0)
-                        this->position_ += Params::fish_in_ring::num_cells;
+                        this->position_ += num_cells_;
                 }
             }
 
@@ -58,11 +64,11 @@ namespace samsar {
                     boost::irange(this->position_,
                         this->position_ + this->heading_ * static_cast<int>(num_cells_look) + this->heading_,
                         this->heading_));
-                std::for_each(neighborhood.begin(), neighborhood.end(), [](int& v) {
+                std::for_each(neighborhood.begin(), neighborhood.end(), [&](int& v) {
                     if (v < 0)
-                        v += Params::fish_in_ring::num_cells;
+                        v += num_cells_;
                     else
-                        v %= static_cast<int>(Params::fish_in_ring::num_cells);
+                        v %= static_cast<int>(num_cells_);
                 });
 
                 // iterate through all the cells the fish can look for neighbors
@@ -79,11 +85,11 @@ namespace samsar {
                         for (size_t k = 0; k < neighbors.size(); ++k) {
                             ++num_neighbors;
                             sum_heading += shoal[neighbors.at(k)].heading();
-                            if (num_neighbors == Params::fish_in_ring::max_neighbors)
+                            if (num_neighbors == max_neighbors_)
                                 break;
                         }
                     }
-                    if (num_neighbors == Params::fish_in_ring::max_neighbors)
+                    if (num_neighbors == max_neighbors_)
                         break;
                 } // for j (num_cells_look_)
 
@@ -112,6 +118,12 @@ namespace samsar {
                 return neighbors;
             }
 
+            size_t num_cells_;
+            size_t max_neighbors_;
+            float prob_move_;
+            float prob_stay_;
+            float prob_obey_;
+            Heading heading_robot_;
             Heading next_heading_;
         };
     } // namespace fish

@@ -22,7 +22,7 @@ namespace samsar {
             static constexpr int deg_vision = 120;
             static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
 
-            static constexpr float prob_obedience = 0.9f;
+            static constexpr float prob_obey = 0.9f;
             static constexpr float prob_stay = 0.901f;
             static constexpr float prob_move = 1.0f;
         };
