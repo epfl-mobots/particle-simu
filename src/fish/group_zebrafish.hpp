@@ -12,10 +12,14 @@
 namespace samsar {
     namespace defaults {
         struct group_zebrafish {
-            static constexpr size_t group_threshold = 2;
+            static constexpr size_t group_threshold = 3;
             static constexpr size_t group_cells_forward = 3;
             static constexpr size_t group_cells_backward = 3;
             static constexpr float social_influence = 0.9f;
+
+            static constexpr float prob_lead = 0.08f;
+            static constexpr float leader_influence = 0.9f;
+            static constexpr size_t follower_threshold = 3;
         };
     } // namespace defaults
 
@@ -28,10 +32,14 @@ namespace samsar {
         public:
             GroupZebrafish()
                 : in_group_(false),
+                  is_leader_(false),
                   group_threshold_(Params::group_zebrafish::group_threshold),
                   group_cells_forward_(Params::group_zebrafish::group_cells_forward),
                   group_cells_backward_(Params::group_zebrafish::group_cells_backward),
-                  social_influence_(Params::group_zebrafish::social_influence)
+                  social_influence_(Params::group_zebrafish::social_influence),
+                  prob_lead_(Params::group_zebrafish::prob_lead),
+                  leader_influence_(Params::group_zebrafish::leader_influence),
+                  follower_threshold_(Params::group_zebrafish::follower_threshold)
             {
             }
 
@@ -51,20 +59,27 @@ namespace samsar {
                 if (this->heading() == Heading::UNDEFINED)
                     return;
 
-                if (!in_group_)
+                if (is_leader_)
                     base_type_t::move();
                 else {
                     this->heading_ = this->next_heading_;
 
                     if (!this->is_robot()) {
-                        bool is_influenced = tools::random_in_range(0.0f, 1.0f) < social_influence_;
-                        if (!is_influenced)
-                            this->heading() = reverse_heading(this->heading());
+                        auto has_leader = group_has_leader();
+                        bool follow_leader = tools::random_in_range(0.0f, 1.0f) < leader_influence_;
+                        if (has_leader.first && follow_leader) {
+                            this->heading_ = has_leader.second;
+                        }
                         else {
-                            auto result = group_sort_positions();
-                            this->heading_ = to_heading(result[0].first - this->position_);
-                            if (this->heading_ == Heading::UNDEFINED)
-                                this->heading_ = this->next_heading_;
+                            bool follow_group = tools::random_in_range(0.0f, 1.0f) < social_influence_;
+                            if (!follow_group)
+                                this->heading() = reverse_heading(this->heading());
+                            else {
+                                auto result = group_sort_positions();
+                                this->heading_ = to_heading(result[0].first - this->position_);
+                                if (this->heading_ == Heading::UNDEFINED)
+                                    this->heading_ = this->next_heading_;
+                            }
                         }
                     }
                     else
@@ -87,10 +102,24 @@ namespace samsar {
                 construct_inverted_table(shoal);
                 current_group_ = find_group();
                 (current_group_.size() + 1 >= group_threshold_) ? in_group_ = true : in_group_ = false;
+
+                if (current_group_.size() < follower_threshold_)
+                    is_leader_ = false;
+                if (tools::random_in_range(0.0f, 1.0f) < prob_lead_)
+                    is_leader_ = true;
             }
 
             bool in_group() const { return in_group_; }
+            bool is_leader() const { return is_leader_; }
             size_t group_size() const { return current_group_.size(); }
+
+            void set_group_threshold(size_t threshold) { group_threshold_ = threshold; }
+            void set_group_cells_forward(size_t cells) { group_cells_forward_ = cells; }
+            void set_group_cells_backward(size_t cells) { group_cells_backward_ = cells; }
+            void set_social_influence(float influence) { social_influence_ = influence; }
+            void set_prob_lead(float prob) { prob_lead_ = prob; }
+            void set_leader_influence(float influence) { leader_influence_ = influence; }
+            void set_follower_threshold(size_t threshold) { follower_threshold_ = threshold; }
 
         private:
             std::vector<GroupZebrafish> find_group() const
@@ -151,11 +180,25 @@ namespace samsar {
                 return pairs;
             }
 
+            std::pair<bool, Heading> group_has_leader() const
+            {
+                if (current_group_.size() == 0)
+                    return std::make_pair(false, Heading::UNDEFINED);
+                for (const GroupZebrafish& f : current_group_)
+                    if (f.is_leader())
+                        return std::make_pair(true, f.heading());
+                return std::make_pair(false, Heading::UNDEFINED);
+            }
+
             bool in_group_;
+            bool is_leader_;
             size_t group_threshold_;
             size_t group_cells_forward_;
             size_t group_cells_backward_;
             float social_influence_;
+            float prob_lead_;
+            float leader_influence_;
+            size_t follower_threshold_;
 
             std::vector<GroupZebrafish> current_group_;
             InvertedFishTable ipos_;

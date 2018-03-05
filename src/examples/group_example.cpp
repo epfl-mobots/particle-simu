@@ -14,13 +14,19 @@ using namespace samsar;
 
 struct Params {
     struct fish_in_ring : defaults::fish_in_ring {
+        static constexpr size_t num_fish = 6;
+        static constexpr size_t num_robot = 0;
     };
 
     struct group_zebrafish : defaults::group_zebrafish {
-        static constexpr size_t group_threshold = 2;
-        static constexpr size_t group_cells_forward = 3;
-        static constexpr size_t group_cells_backward = 3;
+        static constexpr size_t group_threshold = 3;
+        static constexpr size_t group_cells_forward = 7;
+        static constexpr size_t group_cells_backward = 7;
         static constexpr float social_influence = 0.9f;
+
+        static constexpr float prob_lead = 0.08f;
+        static constexpr float leader_influence = 0.9f;
+        static constexpr size_t follower_threshold = 3;
     };
 
     struct simulation : defaults::simulation {
