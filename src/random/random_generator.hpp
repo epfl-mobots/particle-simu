@@ -35,9 +35,9 @@ namespace samsar {
         }
 
         template <typename T, typename std::enable_if<std::is_floating_point<T>::value, int>::type = 0>
-        T normal_random_in_range(T lower_bound, T upper_bound)
+        T normal_random(T mean, T sigma)
         {
-            std::normal_distribution<T> distribution(lower_bound, upper_bound);
+            std::normal_distribution<T> distribution(mean, sigma);
             auto gen = RandomGenerator().gen();
             return distribution(gen);
         }
