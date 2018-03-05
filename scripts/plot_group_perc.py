@@ -59,6 +59,7 @@ def plot_ring(data, args=[]):
     fig = plt.figure(figsize=[8, 6], dpi=args.dpi)
     pgpf = sns.barplot(x=list(range(num_agents)), y=np.float64(perc_in_group_per_fish), palette="muted")
     pgpf.set_title('Percentage in group per fish')
+    plt.ylim([0, 1])
     if args and args.png:
         plt.savefig(pdirectory + '/percentage_in_group_per_fish.png', dpi=args.dpi)
     plt.show()

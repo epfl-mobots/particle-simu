@@ -19,6 +19,9 @@ namespace samsar {
                 if (s->iteration() == 0)
                     (*this->log_file_) << "#iteration polarity" << std::endl;
 
+                if (static_cast<int>(Params::simulation::dump_start) < s->iteration())
+                    return;
+
                 size_t num_agents = s->num_agents();
                 float sum_heading = 0.0f;
                 const auto& fish = s->fish();

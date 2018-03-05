@@ -77,7 +77,7 @@ namespace samsar {
         private:
             const size_t num_agents_;
             const float cell_degree_;
-            const size_t num_cells_look_;
+            size_t num_cells_look_;
             std::vector<FishType> fish_;
         };
     } // namespace sim

@@ -7,18 +7,21 @@
 #include <boost/range/algorithm_ext.hpp>
 #include <boost/range/irange.hpp>
 
+#include <random/random_generator.hpp>
+
 namespace samsar {
     namespace fish {
         template <typename Params> class Zebrafish : public FishBase<Params> {
         public:
-            Zebrafish() : next_heading_(Heading::UNDEFINED)
+            Zebrafish()
+                : num_cells_(Params::fish_in_ring::num_cells),
+                  max_neighbors_(Params::fish_in_ring::max_neighbors),
+                  prob_move_(Params::fish_in_ring::prob_move),
+                  prob_stay_(Params::fish_in_ring::prob_stay),
+                  prob_obey_(Params::fish_in_ring::prob_obey),
+                  heading_robot_(Params::fish_in_ring::heading_robot),
+                  next_heading_(Heading::UNDEFINED)
             {
-                num_cells_ = Params::fish_in_ring::num_cells;
-                max_neighbors_ = Params::fish_in_ring::max_neighbors;
-                prob_move_ = Params::fish_in_ring::prob_move;
-                prob_stay_ = Params::fish_in_ring::prob_stay;
-                prob_obey_ = Params::fish_in_ring::prob_obey;
-                heading_robot_ = Params::fish_in_ring::heading_robot;
             }
 
             void move() override
@@ -80,7 +83,6 @@ namespace samsar {
                     std::vector<size_t> neighbors = find_neighbors(shoal, neighborhood.at(j), this->id_);
                     if (neighbors.size() > 0) {
                         // pick the neighbors in a random way
-                        // TODO: we should insert more criteria for the fish selection
                         std::shuffle(neighbors.begin(), neighbors.end(), tools::RandomGenerator().gen());
                         for (size_t k = 0; k < neighbors.size(); ++k) {
                             ++num_neighbors;
@@ -104,6 +106,14 @@ namespace samsar {
                 next_heading_ = new_heading;
             }
 
+            void set_num_cells(size_t cells) { num_cells_ = cells; }
+            void set_max_neighbors(size_t neighs) { max_neighbors_ = neighs; }
+            void set_prob_move(float prob) { prob_move_ = prob; }
+            void set_prob_stay(float prob) { prob_stay_ = prob; }
+            void set_prob_obey(float prob) { prob_obey_ = prob; }
+            void set_heading_robot(types::Heading hdg) { heading_robot_ = hdg; }
+            void set_deg_vision(int deg) { deg_vision_ = deg; }
+
         protected:
             template <typename Shoal>
             std::vector<size_t> find_neighbors(const Shoal& shoal, int neighborhood, size_t self) const
@@ -125,6 +135,7 @@ namespace samsar {
             float prob_obey_;
             Heading heading_robot_;
             Heading next_heading_;
+            int deg_vision_;
         };
     } // namespace fish
 } // namespace samsar

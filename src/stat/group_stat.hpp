@@ -19,6 +19,9 @@ namespace samsar {
                 if (s->iteration() == 0)
                     (*this->log_file_) << "#iteration fish1_group_size fish2_group_size ..." << std::endl;
 
+                if (static_cast<int>(Params::simulation::dump_start) < s->iteration())
+                    return;
+
                 (*this->log_file_) << s->iteration() << " ";
                 for (const auto& f : s->fish())
                     (*this->log_file_) << f.group_size() << " ";

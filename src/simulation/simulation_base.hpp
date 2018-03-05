@@ -16,6 +16,7 @@ namespace samsar {
     namespace defaults {
         struct simulation {
             static constexpr uint64_t sim_time = 1000;
+            static constexpr uint64_t dump_start = 1;
             static constexpr bool stats_enabled = true;
         };
     } // namespace defaults
