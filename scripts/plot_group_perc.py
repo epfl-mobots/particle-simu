@@ -46,7 +46,7 @@ def plot_ring(data, args=[]):
                 print(colored('Skipping directory creation (already exists)', 'yellow'))
 
     perc_in_group = np.float64(np.sum(np.where(group_sizes >= group_threshold, 1, 0), 1)) / num_agents
-    perc_in_group_per_fish = np.float64(np.sum(np.where(group_sizes >= group_threshold, 1, 0), 0)) / params['sim_time']
+    perc_in_group_per_fish = np.float64(np.sum(np.where(group_sizes >= group_threshold, 1, 0), 0)) / (params['sim_time'] - params['dump_start'])
 
     plt.figure(figsize=[8, 6], dpi=args.dpi)
     plt.plot(perc_in_group, '.-')

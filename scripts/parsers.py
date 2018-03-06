@@ -1,5 +1,6 @@
 params_parser = {
     ('simulation', 'time'): ['sim_time', int],
+    ('dump', 'start'): ['dump_start', int],
     ('number', 'fish'): ['num_fish', int],
     ('number', 'robots'): ['num_robots', int],
     ('max', 'neighbors'): ['max_neighbors', int],

@@ -59,6 +59,8 @@ def plot_ring(data, args=[]):
         vwriter.setup(fig, pdirectory + "/fish_in_ring_exp.mp4", args.dpi)
 
     for i in range(np.shape(positions)[0]):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('Time step: ' + str(i))
         plt.polar(th1, r1, 'b')
         plt.polar(th1, r2, 'b')
         plt.polar([th2, th2], [r3, r4], '--b')
@@ -88,7 +90,7 @@ def plot_ring(data, args=[]):
             plt.savefig(pdirectory + '/' + str(i) + '.png', dpi=args.dpi)
             plt.savefig(pdirectory + '/current.png', dpi=args.dpi)
         if not args.hide_plot:
-            plt.pause(args.frame_rate / 1000)
+            plt.pause(0.5)
         plt.clf()
     if args and args.with_video:
         vwriter.finish()
