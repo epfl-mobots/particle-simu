@@ -16,7 +16,7 @@ namespace samsar {
     namespace defaults {
         struct simulation {
             static constexpr uint64_t sim_time = 1000;
-            static constexpr uint64_t dump_start = 1;
+            static constexpr uint64_t dump_start = 0;
             static constexpr bool stats_enabled = true;
         };
     } // namespace defaults
@@ -37,9 +37,11 @@ namespace samsar {
                 : sim_time_(Params::simulation::sim_time),
                   stats_enabled_(Params::simulation::stats_enabled),
                   iteration_(0),
-                  sim_start_stamp_(tools::timestamp()),
-                  res_dir_(tools::create_folder("sim_" + sim_start_stamp_))
+                  sim_start_stamp_(tools::timestamp())
+
             {
+                if (stats_enabled_)
+                    res_dir_ = tools::create_folder("sim_" + sim_start_stamp_);
             }
 
             virtual void spin()
@@ -70,8 +72,8 @@ namespace samsar {
             bool stats_enabled_;
             int iteration_;
             stat_t stat_;
-            const std::string sim_start_stamp_;
-            const boost::filesystem::path res_dir_;
+            std::string sim_start_stamp_;
+            boost::filesystem::path res_dir_;
         };
     } // namespace sim
 } // namespace samsar

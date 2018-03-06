@@ -72,6 +72,7 @@ namespace samsar {
             }
 
             const std::vector<FishType>& fish() const { return fish_; }
+            std::vector<FishType>& fish() { return fish_; }
             size_t num_agents() const { return num_agents_; }
 
         private:

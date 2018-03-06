@@ -13,7 +13,7 @@ namespace samsar {
         public:
             StatBase() {}
 
-            template <typename Simu> void operator()(const Simu&) { assert(false); }
+            template <typename Simu> void operator()(const Simu&) {}
 
         protected:
             std::shared_ptr<std::ofstream> log_file_;

@@ -17,7 +17,7 @@ namespace samsar {
                 if (s->iteration() == 0)
                     (*this->log_file_) << "#iteration fish1_heading fish2_heading ..." << std::endl;
 
-                if (static_cast<int>(Params::simulation::dump_start) < s->iteration())
+                if (static_cast<int>(Params::simulation::dump_start) > s->iteration())
                     return;
 
                 (*this->log_file_) << s->iteration() << " ";

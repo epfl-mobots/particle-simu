@@ -121,6 +121,8 @@ namespace samsar {
             void set_leader_influence(float influence) { leader_influence_ = influence; }
             void set_follower_threshold(size_t threshold) { follower_threshold_ = threshold; }
 
+            float leader_influence() const { return leader_influence_; }
+
         private:
             std::vector<GroupZebrafish> find_group() const
             {
