@@ -21,6 +21,7 @@ namespace samsar {
                   prob_obey_(Params::fish_in_ring::prob_obey),
                   heading_robot_(Params::fish_in_ring::heading_robot),
                   next_heading_(Heading::UNDEFINED)
+
             {
             }
 
@@ -51,7 +52,8 @@ namespace samsar {
                 (this->is_robot()) ? (move = tools::random_in_range(0.0f, 1.0f) < prob_move_)
                                    : (move = tools::random_in_range(0.0f, 1.0f) < (1 - prob_stay_));
                 if (move) {
-                    this->position() = (this->position() + this->heading()) % static_cast<int>(num_cells_);
+                    this->position()
+                        = (this->position() + this->heading() * this->speed()) % static_cast<int>(num_cells_);
                     if (this->position_ < 0)
                         this->position_ += num_cells_;
                 }
@@ -59,6 +61,8 @@ namespace samsar {
 
             template <typename Shoal> void calc_intuitions(const Shoal& shoal, size_t num_cells_look)
             {
+                this->speed_ = tools::random_in_range<int>(this->min_speed_, this->max_speed_);
+
                 // calculate the neighborhoods according to the agent's heading
                 // and the problem parameters:
                 // degrees of vision + cell degrees = number of cells to look

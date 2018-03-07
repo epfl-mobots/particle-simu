@@ -19,6 +19,7 @@ namespace samsar {
                 if (s->iteration() == 0) {
                     (*this->log_file_) << "-- Simulation params --" << std::endl;
                     (*this->log_file_) << "Simulation time: " << Params::simulation::sim_time << std::endl;
+                    (*this->log_file_) << "Dump start time: " << Params::simulation::dump_start << std::endl;
                     (*this->log_file_) << "Number of fish: " << Params::fish_in_ring::num_fish << std::endl;
                     (*this->log_file_) << "Number of robots: " << Params::fish_in_ring::num_robot << std::endl;
                     (*this->log_file_) << "Max neighbors: " << Params::fish_in_ring::max_neighbors << std::endl;

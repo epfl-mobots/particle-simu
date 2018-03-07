@@ -11,7 +11,13 @@ namespace samsar {
 
         template <typename Params> class FishBase {
         public:
-            FishBase() : heading_(static_cast<Heading>(tools::random_sgn())), position_(-1), is_robot_(false), id_(-1)
+            FishBase()
+                : heading_(static_cast<Heading>(tools::random_sgn())),
+                  position_(-1),
+                  is_robot_(false),
+                  id_(-1),
+                  min_speed_(Params::fish_in_ring::min_speed),
+                  max_speed_(Params::fish_in_ring::max_speed)
             {
             }
 
@@ -26,11 +32,19 @@ namespace samsar {
             void set_id(int id) { id_ = id; }
             int id() const { return id_; }
 
+            void set_speed(int speed) { speed_ = speed; }
+            void set_min_speed(int speed) { min_speed_ = speed; }
+            void set_max_speed(int speed) { max_speed_ = speed; }
+            int speed() const { return speed_; }
+
         protected:
             Heading heading_;
             int position_;
             bool is_robot_;
             int id_;
+            int min_speed_;
+            int max_speed_;
+            int speed_;
         };
 
     } // namespace fish

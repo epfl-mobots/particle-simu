@@ -25,6 +25,9 @@ namespace samsar {
             static constexpr float prob_obey = 0.9f;
             static constexpr float prob_stay = 0.901f;
             static constexpr float prob_move = 1.0f;
+
+            static constexpr int min_speed = 1;
+            static constexpr int max_speed = 2;
         };
     } // namespace defaults
 
