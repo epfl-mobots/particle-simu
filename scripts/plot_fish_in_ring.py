@@ -90,7 +90,7 @@ def plot_ring(data, args=[]):
             plt.savefig(pdirectory + '/' + str(i) + '.png', dpi=args.dpi)
             plt.savefig(pdirectory + '/current.png', dpi=args.dpi)
         if not args.hide_plot:
-            plt.pause(0.5)
+            plt.pause(1/args.frame_rate)
         plt.clf()
     if args and args.with_video:
         vwriter.finish()

@@ -24,7 +24,7 @@ namespace samsar {
 
                 (*this->log_file_) << s->iteration() << " ";
                 for (const auto& f : s->fish())
-                    (*this->log_file_) << f.group_size() << " ";
+                    (*this->log_file_) << f.current_group().size() << " ";
                 (*this->log_file_) << std::endl;
             }
         };

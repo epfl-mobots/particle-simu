@@ -13,21 +13,11 @@
 
 namespace samsar {
     namespace defaults {
-        struct fish_in_ring {
+        struct ring {
             static constexpr size_t num_fish = 5;
             static constexpr size_t num_robot = 1;
-
-            static constexpr int max_neighbors = 3;
             static constexpr size_t num_cells = 40;
             static constexpr int deg_vision = 120;
-            static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
-
-            static constexpr float prob_obey = 0.9f;
-            static constexpr float prob_stay = 0.901f;
-            static constexpr float prob_move = 1.0f;
-
-            static constexpr int min_speed = 1;
-            static constexpr int max_speed = 2;
         };
     } // namespace defaults
 
@@ -39,15 +29,15 @@ namespace samsar {
 
         public:
             FishInRing()
-                : num_agents_(Params::fish_in_ring::num_fish + Params::fish_in_ring::num_robot),
-                  cell_degree_(360.0 / Params::fish_in_ring::num_cells),
-                  num_cells_look_(std::ceil(Params::fish_in_ring::deg_vision / cell_degree_))
+                : num_agents_(Params::ring::num_fish + Params::ring::num_robot),
+                  num_cells_(Params::ring::num_cells),
+                  cell_degree_(360.0 / Params::ring::num_cells),
+                  num_cells_look_(std::ceil(Params::ring::deg_vision / cell_degree_))
             {
-                fish_.resize(num_agents_);
-                int robots_to_assign = Params::fish_in_ring::num_robot;
-                for (size_t i = 0; i < fish_.size(); ++i) {
-                    fish_[i].position()
-                        = std::floor(tools::random_in_range(0.0f, 1.0f) * Params::fish_in_ring::num_cells);
+                int robots_to_assign = Params::ring::num_robot;
+                for (size_t i = 0; i < num_agents_; ++i) {
+                    fish_.push_back(FishType(num_cells_));
+                    fish_[i].position() = std::floor(tools::random_in_range(0.0f, 1.0f) * Params::ring::num_cells);
                     if (robots_to_assign-- > 0)
                         fish_[i].is_robot(true);
                     fish_[i].set_id(i);
@@ -78,10 +68,11 @@ namespace samsar {
             std::vector<FishType>& fish() { return fish_; }
             size_t num_agents() const { return num_agents_; }
 
-        private:
+        protected:
             const size_t num_agents_;
+            const size_t num_cells_;
             const float cell_degree_;
-            size_t num_cells_look_;
+            const size_t num_cells_look_;
             std::vector<FishType> fish_;
         };
     } // namespace sim

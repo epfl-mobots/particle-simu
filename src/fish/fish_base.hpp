@@ -7,6 +7,7 @@
 
 namespace samsar {
     namespace fish {
+
         using namespace types;
 
         template <typename Params> class FishBase {
@@ -16,8 +17,8 @@ namespace samsar {
                   position_(-1),
                   is_robot_(false),
                   id_(-1),
-                  min_speed_(Params::fish_in_ring::min_speed),
-                  max_speed_(Params::fish_in_ring::max_speed)
+                  min_speed_(1),
+                  max_speed_(1)
             {
             }
 
@@ -31,11 +32,12 @@ namespace samsar {
             void is_robot(bool flag) { is_robot_ = flag; }
             void set_id(int id) { id_ = id; }
             int id() const { return id_; }
-
-            void set_speed(int speed) { speed_ = speed; }
-            void set_min_speed(int speed) { min_speed_ = speed; }
-            void set_max_speed(int speed) { max_speed_ = speed; }
+            int min_speed() const { return min_speed_; }
+            int& min_speed() { return min_speed_; }
+            int max_speed() const { return max_speed_; }
+            int& max_speed() { return max_speed_; }
             int speed() const { return speed_; }
+            int& speed() { return speed_; }
 
         protected:
             Heading heading_;

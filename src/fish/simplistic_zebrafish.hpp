@@ -1,5 +1,5 @@
-#ifndef ZEBRAFISH_HPP
-#define ZEBRAFISH_HPP
+#ifndef SIMPLISTIC_ZEBRAFISH_HPP
+#define SIMPLISTIC_ZEBRAFISH_HPP
 
 #include <fish/fish_base.hpp>
 
@@ -10,16 +10,32 @@
 #include <random/random_generator.hpp>
 
 namespace samsar {
+    namespace defaults {
+        struct zebrafish {
+            static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
+
+            static constexpr int max_neighbors = 3;
+
+            static constexpr float prob_obey = 0.9f;
+            static constexpr float prob_stay = 0.901f;
+            static constexpr float prob_move = 1.0f;
+
+            static constexpr int min_speed = 1;
+            static constexpr int max_speed = 3;
+        };
+    } // namespace defaults
+
     namespace fish {
-        template <typename Params> class Zebrafish : public FishBase<Params> {
+
+        template <typename Params> class SimplisticZebrafish : public FishBase<Params> {
         public:
-            Zebrafish()
-                : num_cells_(Params::fish_in_ring::num_cells),
-                  max_neighbors_(Params::fish_in_ring::max_neighbors),
-                  prob_move_(Params::fish_in_ring::prob_move),
-                  prob_stay_(Params::fish_in_ring::prob_stay),
-                  prob_obey_(Params::fish_in_ring::prob_obey),
-                  heading_robot_(Params::fish_in_ring::heading_robot),
+            SimplisticZebrafish(size_t num_cells)
+                : num_cells_(num_cells),
+                  max_neighbors_(Params::zebrafish::max_neighbors),
+                  prob_move_(Params::zebrafish::prob_move),
+                  prob_stay_(Params::zebrafish::prob_stay),
+                  prob_obey_(Params::zebrafish::prob_obey),
+                  heading_robot_(Params::zebrafish::heading_robot),
                   next_heading_(Heading::UNDEFINED)
 
             {
@@ -110,13 +126,12 @@ namespace samsar {
                 next_heading_ = new_heading;
             }
 
-            void set_num_cells(size_t cells) { num_cells_ = cells; }
-            void set_max_neighbors(size_t neighs) { max_neighbors_ = neighs; }
-            void set_prob_move(float prob) { prob_move_ = prob; }
-            void set_prob_stay(float prob) { prob_stay_ = prob; }
-            void set_prob_obey(float prob) { prob_obey_ = prob; }
-            void set_heading_robot(types::Heading hdg) { heading_robot_ = hdg; }
-            void set_deg_vision(int deg) { deg_vision_ = deg; }
+            size_t& num_cells() { return num_cells_; }
+            size_t& max_neighbors() { return max_neighbors_; }
+            float& prob_move() { return prob_move_; }
+            float& prob_stay() { return prob_stay_; }
+            float& prob_obey() { return prob_obey_; }
+            Heading& heading_robot() { return heading_robot_; }
 
         protected:
             template <typename Shoal>
@@ -139,8 +154,8 @@ namespace samsar {
             float prob_obey_;
             Heading heading_robot_;
             Heading next_heading_;
-            int deg_vision_;
         };
+
     } // namespace fish
 } // namespace samsar
 

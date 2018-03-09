@@ -20,17 +20,10 @@ namespace samsar {
                     (*this->log_file_) << "-- Simulation params --" << std::endl;
                     (*this->log_file_) << "Simulation time: " << Params::simulation::sim_time << std::endl;
                     (*this->log_file_) << "Dump start time: " << Params::simulation::dump_start << std::endl;
-                    (*this->log_file_) << "Number of fish: " << Params::fish_in_ring::num_fish << std::endl;
-                    (*this->log_file_) << "Number of robots: " << Params::fish_in_ring::num_robot << std::endl;
-                    (*this->log_file_) << "Max neighbors: " << Params::fish_in_ring::max_neighbors << std::endl;
-                    (*this->log_file_) << "Number of cells: " << Params::fish_in_ring::num_cells << std::endl;
-                    (*this->log_file_) << "Degrees of vision: " << Params::fish_in_ring::deg_vision << std::endl;
-                    (*this->log_file_) << "Robot heading: " << to_str(Params::fish_in_ring::heading_robot) << std::endl;
-                    (*this->log_file_) << "Probability to obey: " << Params::fish_in_ring::prob_obey << std::endl;
-                    (*this->log_file_) << "Probability to stay in position (fish): " << Params::fish_in_ring::prob_stay
-                                       << std::endl;
-                    (*this->log_file_) << "Probability to move (robot): " << Params::fish_in_ring::prob_move
-                                       << std::endl;
+                    (*this->log_file_) << "Number of fish: " << Params::ring::num_fish << std::endl;
+                    (*this->log_file_) << "Number of robots: " << Params::ring::num_robot << std::endl;
+                    (*this->log_file_) << "Number of cells: " << Params::ring::num_cells << std::endl;
+                    (*this->log_file_) << "Degrees of vision: " << Params::ring::deg_vision << std::endl;
                 }
             }
         };

@@ -59,6 +59,6 @@ def build(bld):
         uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
         target='ring_example')
     bld.program(features = 'cxx',
-        source='src/examples/group_example.cpp',
+        source='src/examples/social_fish_example.cpp',
         uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='group_example')
+        target='social_fish_example')

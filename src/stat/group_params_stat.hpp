@@ -18,12 +18,9 @@ namespace samsar {
 
                 if (s->iteration() == 0) {
                     (*this->log_file_) << "-- Group params --" << std::endl;
-                    (*this->log_file_) << "Group threshold: " << Params::group_zebrafish::group_threshold << std::endl;
-                    (*this->log_file_) << "Group cells forward: " << Params::group_zebrafish::group_cells_forward
-                                       << std::endl;
-                    (*this->log_file_) << "Group cells backward: " << Params::group_zebrafish::group_cells_backward
-                                       << std::endl;
-                    (*this->log_file_) << "Social Influence: " << Params::group_zebrafish::social_influence
+                    (*this->log_file_) << "Group threshold: " << Params::ring_ext::group_min_size << std::endl;
+                    (*this->log_file_) << "Group cells forward: " << Params::ring_ext::group_cells_forward << std::endl;
+                    (*this->log_file_) << "Group cells backward: " << Params::ring_ext::group_cells_backward
                                        << std::endl;
                 }
             }

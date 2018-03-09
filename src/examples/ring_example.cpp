@@ -1,5 +1,5 @@
-#include <fish/zebrafish.hpp>
-#include <simulation/fish_in_ring_sim.hpp>
+#include <fish/simplistic_zebrafish.hpp>
+#include <simulation/fish_in_ring.hpp>
 #include <stat/fish_in_ring_params_stat.hpp>
 #include <stat/heading_stat.hpp>
 #include <stat/polarity_stat.hpp>
@@ -11,17 +11,20 @@
 using namespace samsar;
 
 struct Params {
-    struct fish_in_ring : defaults::fish_in_ring {
+    struct ring : public defaults::ring {
     };
 
-    struct simulation : defaults::simulation {
+    struct zebrafish : public defaults::zebrafish {
+    };
+
+    struct simulation : public defaults::simulation {
         static constexpr uint64_t sim_time = 1800;
     };
 };
 
 int main()
 {
-    using fish_type_t = fish::Zebrafish<Params>;
+    using fish_type_t = fish::SimplisticZebrafish<Params>;
     using stat_t = boost::fusion::vector<stat::PositionStat<Params>, stat::HeadingStat<Params>,
         stat::PolarityStat<Params>, stat::FishInRingParamsStat<Params>>;
     sim::FishInRing<Params, fish_type_t, stat_t> fish_in_ring;
