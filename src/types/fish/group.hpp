@@ -22,12 +22,9 @@ namespace samsar {
 
         template <typename FishType> struct Group {
         public:
-            Group() : group_id_(-1), center_of_gravity_(-1) {}
+            Group() : group_id_(-1), center_of_mass_(-1) {}
 
-            Group(const std::vector<FishType>& fish) : group_id_(-1), center_of_gravity_(-1), fish_(fish)
-            {
-                calc_cog();
-            }
+            Group(const std::vector<FishType>& fish) : group_id_(-1), center_of_mass_(-1), fish_(fish) { calc_cog(); }
 
             bool has(int id) const
             {
@@ -56,8 +53,8 @@ namespace samsar {
             size_t size() const { return fish_.size(); }
             int group_id() const { return group_id_; }
             int& group_id() { return group_id_; }
-            int center_of_gravity() const { return center_of_gravity_; }
-            int& center_of_gravity() { return center_of_gravity_; }
+            int center_of_mass() const { return center_of_mass_; }
+            int& center_of_mass() { return center_of_mass_; }
             std::vector<FishType>& fish() { return fish_; }
             std::vector<FishType> fish() const { return fish_; }
 
@@ -72,11 +69,11 @@ namespace samsar {
                     pairs.begin(), pairs.end(), [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
                         return lhs.second > rhs.second;
                     });
-                center_of_gravity_ = pairs.at(0).first;
+                center_of_mass_ = pairs.at(0).first;
             }
 
             int group_id_;
-            int center_of_gravity_;
+            int center_of_mass_;
             std::vector<FishType> fish_;
         };
 

@@ -110,15 +110,15 @@ namespace samsar {
                 }
                 else {
                     int distance = -1;
-                    if (this->position_ + g.center_of_gravity() + 1 > static_cast<int>(num_cells_))
+                    if (this->position_ + g.center_of_mass() + 1 > static_cast<int>(num_cells_))
                         distance = std::abs(this->position_ - static_cast<int>(num_cells_))
-                            + std::abs(g.center_of_gravity() - static_cast<int>(num_cells_));
+                            + std::abs(g.center_of_mass() - static_cast<int>(num_cells_));
                     else
-                        distance = std::abs(this->position_ - g.center_of_gravity());
+                        distance = std::abs(this->position_ - g.center_of_mass());
                     if (distance >= static_cast<int>(attraction_distance_))
-                        desired_pos_ = DesiredPositionInfo(g.center_of_gravity(), reverse_heading(g.imposed_heading()));
+                        desired_pos_ = DesiredPositionInfo(g.center_of_mass(), reverse_heading(g.imposed_heading()));
                     else
-                        desired_pos_ = DesiredPositionInfo(g.center_of_gravity(), random_heading());
+                        desired_pos_ = DesiredPositionInfo(g.center_of_mass(), random_heading());
                 }
             }
 
