@@ -25,8 +25,7 @@ namespace samsar {
             }
         }
 
-        template <typename T, typename std::enable_if<std::is_integral<T>::value, int>::type = 0>
-        Heading to_heading(T candidate)
+        template <typename T> Heading to_heading(T candidate)
         {
             if (candidate == 0)
                 return Heading::UNDEFINED;

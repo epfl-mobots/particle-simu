@@ -18,9 +18,10 @@ namespace samsar {
 
                 if (s->iteration() == 0) {
                     (*this->log_file_) << "-- Group params --" << std::endl;
-                    (*this->log_file_) << "Group threshold: " << Params::ring_ext::group_min_size << std::endl;
-                    (*this->log_file_) << "Group cells forward: " << Params::ring_ext::group_cells_forward << std::endl;
-                    (*this->log_file_) << "Group cells backward: " << Params::ring_ext::group_cells_backward
+                    (*this->log_file_) << "Group threshold: " << Params::social_zebrafish::group_threshold << std::endl;
+                    (*this->log_file_) << "Group cells forward: " << Params::social_zebrafish::cells_forward
+                                       << std::endl;
+                    (*this->log_file_) << "Group cells backward: " << Params::social_zebrafish::cells_backward
                                        << std::endl;
                 }
             }

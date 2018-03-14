@@ -48,18 +48,22 @@ namespace samsar {
             {
                 using namespace types;
 
-                // update statistics
-                this->update_stats(this);
+                std::vector<int> idcs;
+                boost::push_back(idcs, boost::irange(0, static_cast<int>(fish_.size()), 1));
+                std::shuffle(idcs.begin(), idcs.end(), tools::RandomGenerator().gen());
 
                 // calculate fish intuitions in accordance with the shoal status
-                for (auto& f : fish_)
-                    f.calc_intuitions(fish_, num_cells_look_);
+                for (const int idx : idcs)
+                    fish_[idx].calc_intuitions(fish_, num_cells_look_);
 
                 // apply intuitions and move towards the respective heading
                 // the fish might discard this intuition and stay in its
                 // position or even move towards the oposite heading of the shoal
-                for (auto& f : fish_)
-                    f.move();
+                for (const int idx : idcs)
+                    fish_[idx].move();
+
+                // update statistics
+                this->update_stats(this);
 
                 base_type_t::spin_once();
             }
@@ -67,6 +71,7 @@ namespace samsar {
             const std::vector<FishType>& fish() const { return fish_; }
             std::vector<FishType>& fish() { return fish_; }
             size_t num_agents() const { return num_agents_; }
+            size_t num_cells() const { return num_cells_; }
 
         protected:
             const size_t num_agents_;

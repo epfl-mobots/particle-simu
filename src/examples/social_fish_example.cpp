@@ -1,5 +1,5 @@
 #include <fish/social_zebrafish.hpp>
-#include <simulation/fish_in_ring_ext.hpp>
+#include <simulation/fish_in_ring.hpp>
 #include <stat/fish_in_ring_params_stat.hpp>
 #include <stat/group_params_stat.hpp>
 #include <stat/group_stat.hpp>
@@ -16,16 +16,14 @@ struct Params {
     struct ring : public defaults::ring {
         static constexpr size_t num_fish = 6;
         static constexpr size_t num_robot = 0;
-    };
-
-    struct ring_ext : public defaults::ring_ext {
+        static constexpr size_t num_cells = 160;
     };
 
     struct social_zebrafish : public defaults::social_zebrafish {
     };
 
     struct simulation : public defaults::simulation {
-        static constexpr uint64_t sim_time = 1800;
+        static constexpr uint64_t sim_time = 7200;
     };
 };
 
@@ -35,7 +33,17 @@ int main()
     using stat_t
         = boost::fusion::vector<stat::PositionStat<Params>, stat::HeadingStat<Params>, stat::PolarityStat<Params>,
             stat::FishInRingParamsStat<Params>, stat::GroupParamsStat<Params>, stat::GroupStat<Params>>;
-    sim::FishInRingExt<Params, fish_type_t, stat_t> fish_in_ring;
+    sim::FishInRing<Params, fish_type_t, stat_t> fish_in_ring;
+
+    int random_pos = static_cast<int>(tools::random_in_range(0.0f, 1.0f) * fish_in_ring.num_cells());
+    for (auto& f : fish_in_ring.fish()) {
+        int sgn = tools::random_sgn();
+        int pos;
+        (sgn < 0) ? pos = tools::random_in_range(0, static_cast<int>(Params::social_zebrafish::cells_forward))
+                  : pos = tools::random_in_range(0, static_cast<int>(Params::social_zebrafish::cells_backward));
+        f.position() = tools::random_in_range(0, pos) + random_pos;
+        f.heading() = types::Heading::CLOCKWISE;
+    }
 
     tools::Timer t;
     t.start();

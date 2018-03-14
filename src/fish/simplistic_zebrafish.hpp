@@ -75,7 +75,7 @@ namespace samsar {
                 }
             }
 
-            template <typename Shoal> void calc_intuitions(const Shoal& shoal, size_t num_cells_look)
+            template <typename Fish> void calc_intuitions(const Fish& fish, size_t num_cells_look)
             {
                 this->speed_ = tools::random_in_range<int>(this->min_speed_, this->max_speed_);
 
@@ -100,13 +100,13 @@ namespace samsar {
                 int sum_heading = 0;
                 for (size_t j = 0; j <= num_cells_look; ++j) {
                     // find the fish that belong to the jth neighborhood
-                    std::vector<size_t> neighbors = find_neighbors(shoal, neighborhood.at(j), this->id_);
+                    std::vector<size_t> neighbors = find_neighbors(fish, neighborhood.at(j), this->id_);
                     if (neighbors.size() > 0) {
                         // pick the neighbors in a random way
                         std::shuffle(neighbors.begin(), neighbors.end(), tools::RandomGenerator().gen());
                         for (size_t k = 0; k < neighbors.size(); ++k) {
                             ++num_neighbors;
-                            sum_heading += shoal[neighbors.at(k)].heading();
+                            sum_heading += fish[neighbors.at(k)].heading();
                             if (num_neighbors == max_neighbors_)
                                 break;
                         }

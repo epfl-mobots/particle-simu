@@ -5,17 +5,21 @@
 #include <types/fish/group.hpp>
 #include <types/movement/desired_position.hpp>
 
+#include <boost/range.hpp>
+#include <boost/range/algorithm_ext.hpp>
+#include <boost/range/irange.hpp>
+
 namespace samsar {
     namespace defaults {
         struct social_zebrafish {
             static constexpr int min_speed = 1;
-            static constexpr int max_speed = 2;
+            static constexpr int max_speed = 1;
 
-            static constexpr size_t attraction_disctance = 5;
+            static constexpr float prob_obey = 1.0f;
 
-            static constexpr float prob_obey = 0.99f;
-            static constexpr float obedience_noise = 0.0f;
-            static constexpr float leadership_noise = 0.01f;
+            static constexpr size_t group_threshold = 3;
+            static constexpr size_t cells_forward = 5;
+            static constexpr size_t cells_backward = 5;
         };
     } // namespace defaults
 
@@ -28,13 +32,12 @@ namespace samsar {
 
         public:
             SocialZebrafish(size_t num_cells)
-                : attraction_distance_(Params::social_zebrafish::attraction_disctance),
-                  num_cells_(num_cells),
-                  prob_lead_(tools::random_in_range(0.0f, 1.0f)),
+                : num_cells_(num_cells),
+                  group_threshold_(Params::social_zebrafish::group_threshold),
+                  cells_forward_(Params::social_zebrafish::cells_forward),
+                  cells_backward_(Params::social_zebrafish::cells_backward),
                   prob_obey_(Params::social_zebrafish::prob_obey),
-                  obedience_noise_(Params::social_zebrafish::obedience_noise),
-                  leadership_noise_(Params::social_zebrafish::leadership_noise),
-                  in_group_(false)
+                  next_heading_(this->heading_)
             {
                 this->min_speed() = Params::social_zebrafish::min_speed;
                 this->max_speed() = Params::social_zebrafish::max_speed;
@@ -46,6 +49,8 @@ namespace samsar {
                 // this copy constructor explicitly skips the copying
                 // of the current_group_ vector, otherwise an infinite
                 // recursive copying will be invoked
+                current_group_ = Group();
+
                 this->heading_ = sz.heading();
                 this->position_ = sz.position();
                 this->is_robot_ = sz.is_robot();
@@ -53,15 +58,13 @@ namespace samsar {
                 this->min_speed_ = sz.min_speed();
                 this->max_speed_ = sz.max_speed();
                 this->speed_ = sz.speed();
-                attraction_distance_ = sz.attraction_distance();
+
                 num_cells_ = sz.num_cells();
-                next_heading_ = sz.next_heading();
-                desired_pos_ = sz.desired_pos();
-                in_group_ = sz.in_group();
-                prob_lead_ = sz.prob_lead();
+                group_threshold_ = sz.group_threshold();
+                cells_forward_ = sz.cells_forward();
+                cells_backward_ = sz.cells_backward();
                 prob_obey_ = sz.prob_obey();
-                obedience_noise_ = sz.obedience_noise();
-                leadership_noise_ = sz.leadership_noise();
+                next_heading_ = sz.next_heading();
             }
 
             void move() override
@@ -72,85 +75,113 @@ namespace samsar {
                     this->position_ += num_cells_;
             }
 
-            template <typename Shoal> void calc_intuitions(const Shoal& /*shoal*/, size_t /*num_cells_look*/)
+            template <typename Fish> void calc_intuitions(const Fish& fish, size_t /*num_cells_look*/)
             {
-                prob_lead_ += tools::random_sgn() * tools::random_in_range(0.0f, leadership_noise_);
-                prob_obey_ += tools::random_sgn() * tools::random_in_range(0.0f, obedience_noise_);
-                if (in_group_) {
-                    if (tools::random_in_range(0.0f, 1.0f) < (1 - prob_obey_)) {
-                        // if a fish initiates a movement it is more likely
-                        // to become a leader, therefore we re evalutate its
-                        // probability as a leader
-                        next_heading_ = reverse_heading(next_heading_);
-                        prob_lead_ = tools::random_in_range(0.0f, 1.0f);
+                construct_group(fish);
+                calc_prob_lead(fish);
+
+                if (current_group_.size() > 0) {
+                    next_heading_ = to_heading(current_group_.weighted_heading(*this));
+                    if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey_) {
+                        next_heading_ = reverse_heading(current_group_.heading());
                     }
-                    else
-                        next_heading_ = current_group_.imposed_heading();
-                }
-                else if (!desired_pos_.empty())
-                    next_heading_ = desired_pos_.heading_;
-                else
-                    next_heading_ = this->heading_;
-            }
-
-            template <typename FishGroups> void update_group_info(const FishGroups& fgroups)
-            {
-                using namespace types;
-                in_group_ = false;
-                current_group_ = Group();
-                if (fgroups.size() == 0)
-                    return;
-
-                const auto& g = fgroups.at(0);
-                if (g.has(this->id()) && (g.size() > 1)) {
-                    desired_pos_.clear();
-                    in_group_ = true;
-                    current_group_ = g;
-                    return;
                 }
                 else {
-                    int distance = -1;
-                    if (this->position_ + g.center_of_mass() + 1 > static_cast<int>(num_cells_))
-                        distance = std::abs(this->position_ - static_cast<int>(num_cells_))
-                            + std::abs(g.center_of_mass() - static_cast<int>(num_cells_));
-                    else
-                        distance = std::abs(this->position_ - g.center_of_mass());
-                    if (distance >= static_cast<int>(attraction_distance_))
-                        desired_pos_ = DesiredPositionInfo(g.center_of_mass(), reverse_heading(g.imposed_heading()));
-                    else
-                        desired_pos_ = DesiredPositionInfo(g.center_of_mass(), random_heading());
+                    next_heading_ = this->heading_;
+                    if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey_)
+                        next_heading_ = reverse_heading(current_group_.heading());
                 }
+
+                if (next_heading_ == Heading::UNDEFINED)
+                    next_heading_ = to_heading(random_heading());
             }
 
-            size_t attraction_distance() const { return attraction_distance_; }
-            size_t num_cells() const { return num_cells_; }
-            Heading next_heading() const { return next_heading_; }
-            DesiredPositionInfo desired_pos() const { return desired_pos_; }
-            bool in_group() const { return in_group_; }
-            float prob_lead() const { return prob_lead_; }
-            float prob_obey() const { return prob_obey_; }
-            types::Group<SocialZebrafish<Params>> current_group() const { return current_group_; }
-            float obedience_noise() const { return obedience_noise_; }
-            float leadership_noise() const { return leadership_noise_; }
+            template <typename FishVec> void construct_group(const FishVec& fish)
+            {
+                using namespace types;
 
-            size_t& attraction_distance() { return attraction_distance_; }
+                std::vector<int> pos;
+                // look for group forward
+                boost::push_back(pos,
+                    boost::irange(this->position_,
+                        this->position_ + this->heading_ * static_cast<int>(cells_forward_) + this->heading_,
+                        this->heading_));
+                // look for group backward
+                boost::push_back(pos,
+                    boost::irange(this->position_ + (-this->heading_ * static_cast<int>(cells_backward_)),
+                        this->position_, this->heading_));
+                std::for_each(pos.begin(), pos.end(),
+                    [&](int& v) { (v < 0) ? v += this->num_cells_ : v %= static_cast<int>(this->num_cells_); });
+
+                FishVec candidate;
+                auto ipos = InvertedFishTable()(fish);
+                for (int p : pos) {
+                    if (ipos.find(p) == ipos.end())
+                        continue;
+                    candidate.insert(candidate.end(), ipos.at(p).begin(), ipos.at(p).end());
+                }
+
+                current_group_.clear();
+                if (candidate.size() >= group_threshold_)
+                    current_group_.set(candidate);
+            }
+
+            template <typename FishVec> void calc_prob_lead(const FishVec& fish)
+            {
+                if (current_group_.size() == 0) {
+                    prob_obey_ = Params::social_zebrafish::prob_obey;
+                    return;
+                }
+
+                // we take into account the fish that are located in front of the focal fish,
+                // i.e. in its field of view. Fish that do not see a lot of neighbors in front
+                // of them have higher probability to change direction, while ones that have
+                // a lot of fish in front of them, are less prone to disobey the group.
+                std::vector<int> pos;
+                boost::push_back(pos,
+                    boost::irange(this->position_,
+                        this->position_ + this->heading_ * static_cast<int>(cells_forward_) + this->heading_,
+                        this->heading_));
+                std::for_each(pos.begin(), pos.end(),
+                    [&](int& v) { (v < 0) ? v += this->num_cells_ : v %= static_cast<int>(this->num_cells_); });
+
+                int neighs = 0;
+                auto ipos = InvertedFishTable()(fish);
+                for (int p : pos) {
+                    if (ipos.find(p) == ipos.end())
+                        continue;
+                    ++neighs;
+                }
+
+                float alpha = -2.5;
+                prob_obey_ = Params::social_zebrafish::prob_obey * (1 - std::exp(alpha * neighs));
+            }
+
+            size_t num_cells() const { return num_cells_; }
+            size_t group_threshold() const { return group_threshold_; }
+            size_t cells_forward() const { return cells_forward_; }
+            size_t cells_backward() const { return cells_backward_; }
+            float prob_obey() const { return prob_obey_; }
+            Heading next_heading() const { return next_heading_; }
+
             size_t& num_cells() { return num_cells_; }
+            size_t& group_threshold() { return group_threshold_; }
+            size_t& cells_forward() { return cells_forward_; }
+            size_t& cells_backward() { return cells_backward_; }
+            float& prob_obey() { return prob_obey_; }
             Heading& next_heading() { return next_heading_; }
-            Heading& desired_pos() { return desired_pos_; }
-            bool& in_group() { return in_group_; }
+
+            Group current_group() const { return current_group_; }
 
         private:
-            size_t attraction_distance_;
             size_t num_cells_;
-            Heading next_heading_;
-            float prob_lead_;
+            size_t group_threshold_;
+            size_t cells_forward_;
+            size_t cells_backward_;
             float prob_obey_;
-            float obedience_noise_;
-            float leadership_noise_;
+            Heading next_heading_;
 
             Group current_group_;
-            DesiredPositionInfo desired_pos_;
-            bool in_group_;
         }; // namespace fish
     } // namespace fish
 } // namespace samsar
