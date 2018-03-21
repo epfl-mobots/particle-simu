@@ -95,7 +95,7 @@ def plot_ring(data, args=[]):
         plt.clf()
     if args and args.with_video:
         vwriter.finish()
-        
+
     # plot_polarities(polarities, args)
 
 

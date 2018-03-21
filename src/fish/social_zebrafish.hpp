@@ -12,6 +12,8 @@
 namespace samsar {
     namespace defaults {
         struct social_zebrafish {
+            static constexpr types::Heading heading_robot = types::Heading::CLOCKWISE;
+
             static constexpr int min_speed = 1;
             static constexpr int max_speed = 1;
 
@@ -37,7 +39,8 @@ namespace samsar {
                   cells_forward_(Params::social_zebrafish::cells_forward),
                   cells_backward_(Params::social_zebrafish::cells_backward),
                   prob_obey_(Params::social_zebrafish::prob_obey),
-                  next_heading_(this->heading_)
+                  next_heading_(this->heading_),
+                  heading_change_(false)
             {
                 this->min_speed() = Params::social_zebrafish::min_speed;
                 this->max_speed() = Params::social_zebrafish::max_speed;
@@ -65,11 +68,16 @@ namespace samsar {
                 cells_backward_ = sz.cells_backward();
                 prob_obey_ = sz.prob_obey();
                 next_heading_ = sz.next_heading();
+                heading_change_ = sz.heading_change();
             }
 
             void move() override
             {
                 this->heading_ = next_heading_;
+
+                if (heading_change_)
+                    return;
+
                 this->position() = (this->position() + this->speed() * this->heading()) % static_cast<int>(num_cells_);
                 if (this->position_ < 0)
                     this->position_ += num_cells_;
@@ -80,16 +88,29 @@ namespace samsar {
                 construct_group(fish);
                 calc_prob_lead(fish);
 
+                if (this->is_robot_) {
+                    next_heading_ = Params::social_zebrafish::heading_robot;
+                    return;
+                }
+
+                if (heading_change_) {
+                    heading_change_ = false;
+                    return;
+                }
+
                 if (current_group_.size() > 0) {
                     next_heading_ = to_heading(current_group_.weighted_heading(*this));
                     if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey_) {
                         next_heading_ = reverse_heading(current_group_.heading());
+                        heading_change_ = true;
                     }
                 }
                 else {
                     next_heading_ = this->heading_;
-                    if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey_)
+                    if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey_) {
                         next_heading_ = reverse_heading(current_group_.heading());
+                        heading_change_ = true;
+                    }
                 }
 
                 if (next_heading_ == Heading::UNDEFINED)
@@ -103,22 +124,23 @@ namespace samsar {
                 std::vector<int> pos;
                 // look for group forward
                 boost::push_back(pos,
-                    boost::irange(this->position_,
+                    boost::irange(this->position_ + 1,
                         this->position_ + this->heading_ * static_cast<int>(cells_forward_) + this->heading_,
                         this->heading_));
                 // look for group backward
                 boost::push_back(pos,
                     boost::irange(this->position_ + (-this->heading_ * static_cast<int>(cells_backward_)),
-                        this->position_, this->heading_));
+                        this->position_ + this->heading_, this->heading_));
                 std::for_each(pos.begin(), pos.end(),
                     [&](int& v) { (v < 0) ? v += this->num_cells_ : v %= static_cast<int>(this->num_cells_); });
 
                 FishVec candidate;
                 auto ipos = InvertedFishTable()(fish);
-                for (int p : pos) {
-                    if (ipos.find(p) == ipos.end())
+                for (const auto& p : ipos) {
+                    auto result = std::find(pos.begin(), pos.end(), p.first);
+                    if (result == pos.end())
                         continue;
-                    candidate.insert(candidate.end(), ipos.at(p).begin(), ipos.at(p).end());
+                    candidate.insert(candidate.end(), p.second.begin(), p.second.end());
                 }
 
                 current_group_.clear();
@@ -153,7 +175,7 @@ namespace samsar {
                     ++neighs;
                 }
 
-                prob_obey_ = Params::social_zebrafish::prob_obey * (1 - 1.0f / std::pow(neighs + 2, 2));
+                prob_obey_ = Params::social_zebrafish::prob_obey * (1 - 1.0f / std::pow(neighs + 1, 4));
             }
 
             size_t num_cells() const { return num_cells_; }
@@ -162,6 +184,7 @@ namespace samsar {
             size_t cells_backward() const { return cells_backward_; }
             float prob_obey() const { return prob_obey_; }
             Heading next_heading() const { return next_heading_; }
+            bool heading_change() const { return heading_change_; }
 
             size_t& num_cells() { return num_cells_; }
             size_t& group_threshold() { return group_threshold_; }
@@ -169,6 +192,7 @@ namespace samsar {
             size_t& cells_backward() { return cells_backward_; }
             float& prob_obey() { return prob_obey_; }
             Heading& next_heading() { return next_heading_; }
+            bool& heading_change() { return heading_change_; }
 
             Group current_group() const { return current_group_; }
 
@@ -181,6 +205,7 @@ namespace samsar {
             Heading next_heading_;
 
             Group current_group_;
+            bool heading_change_;
         }; // namespace fish
     } // namespace fish
 } // namespace samsar

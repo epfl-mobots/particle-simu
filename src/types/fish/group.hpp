@@ -25,20 +25,20 @@ namespace samsar {
 
         namespace defaults {
             struct WeightFunc {
-                WeightFunc() : alpha_f_(2), alpha_b_(-1) {}
+                WeightFunc() : alpha_f_(0.3f), alpha_b_(-2) {}
 
                 template <typename Fish>
                 float operator()(const std::vector<Fish>& /*fv*/, const Fish& ff, const Fish& f) const
                 {
                     std::vector<int> forward;
                     boost::push_back(forward,
-                        boost::irange(ff.position(),
-                            ff.position() + ff.heading() * static_cast<int>(ff.cells_forward()) + ff.heading(),
-                            ff.heading()));
+                        boost::irange(ff.position() + ff.heading() * static_cast<int>(ff.cells_forward()),
+                            ff.position() - ff.heading(), -ff.heading()));
                     std::vector<int> backward;
                     boost::push_back(backward,
-                        boost::irange(ff.position() + (-ff.heading() * static_cast<int>(ff.cells_backward())),
-                            ff.position(), ff.heading()));
+                        boost::irange(ff.position() - ff.heading(),
+                            ff.position() + (-ff.heading() * static_cast<int>(ff.cells_backward())) - ff.heading(),
+                            -ff.heading()));
                     std::for_each(forward.begin(), forward.end(),
                         [&](int& v) { (v < 0) ? v += ff.num_cells() : v %= static_cast<int>(ff.num_cells()); });
                     std::for_each(backward.begin(), backward.end(),
@@ -47,7 +47,7 @@ namespace samsar {
                     const auto itf = std::find(forward.begin(), forward.end(), f.position());
                     if (!(forward.end() == itf)) {
                         auto idx = std::distance(forward.begin(), itf);
-                        return std::exp(alpha_f_ * idx);
+                        return std::exp(idx * alpha_f_);
                     }
 
                     const auto itb = std::find(backward.begin(), backward.end(), f.position());
@@ -92,13 +92,12 @@ namespace samsar {
 
             Heading weighted_heading(const FishType& focal_fish) const
             {
-                int sum = 0;
+                float sum = 0.0;
                 for (const auto& f : fish_) {
                     if (focal_fish.id() == f.id())
                         continue;
                     sum += weight_func_(fish_, focal_fish, f) * f.next_heading();
                 }
-
                 return to_heading(sum);
             }
 

@@ -18,8 +18,8 @@ def read_data(path):
     data['params'] = parse_fir_params(path)
     data['group_params'] = parse_group_params(path)
     data['positions'] = np.loadtxt(path + '/positions.dat', skiprows=1)
-    data['headings'] = np.loadtxt(path + '/headings.dat', skiprows=1)
-    data['polarities'] = np.loadtxt(path + '/polarities.dat', skiprows=1)
+    # data['headings'] = np.loadtxt(path + '/headings.dat', skiprows=1)
+    # data['polarities'] = np.loadtxt(path + '/polarities.dat', skiprows=1)
     data['group'] = np.loadtxt(path + '/group.dat', skiprows=1)
     return data
 
