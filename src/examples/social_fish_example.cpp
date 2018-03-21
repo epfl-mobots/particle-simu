@@ -16,14 +16,14 @@ struct Params {
     struct ring : public defaults::ring {
         static constexpr size_t num_fish = 6;
         static constexpr size_t num_robot = 0;
-        static constexpr size_t num_cells = 160;
+        static constexpr size_t num_cells = 40;
     };
 
     struct social_zebrafish : public defaults::social_zebrafish {
     };
 
     struct simulation : public defaults::simulation {
-        static constexpr uint64_t sim_time = 7200;
+        static constexpr uint64_t sim_time = 5450;
     };
 };
 

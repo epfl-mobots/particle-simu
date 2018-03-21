@@ -24,7 +24,7 @@ def read_data(path):
     return data
 
 
-def plot_ring(data, args=[]):
+def plot_groups(data, args=[]):
     params = data['params'][0]
     group_params = data['group_params'][0]
     num_cells = params['num_cells']
@@ -57,6 +57,7 @@ def plot_ring(data, args=[]):
         plt.savefig(pdirectory + '/group_percentages.png', dpi=args.dpi)
 
     fig = plt.figure(figsize=[8, 6], dpi=args.dpi)
+    print(perc_in_group_per_fish)
     pgpf = sns.barplot(x=list(range(num_agents)), y=np.float64(perc_in_group_per_fish), palette="muted")
     pgpf.set_title('Percentage in group per fish')
     plt.ylim([0, 1])
@@ -84,4 +85,4 @@ if __name__ == '__main__':
         print('Plotting simulation results with parameters:\n')
         for l in data['params'][1]:
             sys.stdout.write(l)
-        plot_ring(data, args)
+        plot_groups(data, args)

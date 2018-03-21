@@ -15,11 +15,11 @@ namespace samsar {
             static constexpr int min_speed = 1;
             static constexpr int max_speed = 1;
 
-            static constexpr float prob_obey = 1.0f;
-
             static constexpr size_t group_threshold = 3;
             static constexpr size_t cells_forward = 5;
             static constexpr size_t cells_backward = 5;
+
+            static constexpr float prob_obey = 1.0f;
         };
     } // namespace defaults
 
@@ -153,8 +153,7 @@ namespace samsar {
                     ++neighs;
                 }
 
-                float alpha = -2.5;
-                prob_obey_ = Params::social_zebrafish::prob_obey * (1 - std::exp(alpha * neighs));
+                prob_obey_ = Params::social_zebrafish::prob_obey * (1 - 1.0f / std::pow(neighs + 2, 2));
             }
 
             size_t num_cells() const { return num_cells_; }

@@ -73,11 +73,18 @@ namespace samsar {
             size_t num_agents() const { return num_agents_; }
             size_t num_cells() const { return num_cells_; }
 
+            void set_num_cells(size_t num_cells)
+            {
+                num_cells_ = num_cells;
+                for (auto& f : fish_)
+                    f.num_cells() = num_cells_;
+            }
+
         protected:
-            const size_t num_agents_;
-            const size_t num_cells_;
-            const float cell_degree_;
-            const size_t num_cells_look_;
+            size_t num_agents_;
+            size_t num_cells_;
+            float cell_degree_;
+            size_t num_cells_look_;
             std::vector<FishType> fish_;
         };
     } // namespace sim

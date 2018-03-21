@@ -11,7 +11,7 @@
 
 namespace samsar {
     namespace types {
-        enum Heading : int { CLOCKWISE = -1, UNDEFINED = 0, COUNTER_CLOCKWISE = 1 };
+        enum Heading : int { COUNTER_CLOCKWISE = -1, UNDEFINED = 0, CLOCKWISE = 1 };
 
         std::string to_str(Heading heading)
         {
@@ -30,9 +30,9 @@ namespace samsar {
             if (candidate == 0)
                 return Heading::UNDEFINED;
             else if (candidate < 0)
-                return Heading::CLOCKWISE;
-            else
                 return Heading::COUNTER_CLOCKWISE;
+            else
+                return Heading::CLOCKWISE;
         }
 
         Heading reverse_heading(Heading hdg) { return to_heading(-1 * static_cast<int>(hdg)); }

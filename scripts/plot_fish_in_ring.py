@@ -17,8 +17,8 @@ def read_data(path):
     data = dict()
     data['params'] = parse_fir_params(path)
     data['positions'] = np.loadtxt(path + '/positions.dat', skiprows=1)
-    data['headings'] = np.loadtxt(path + '/headings.dat', skiprows=1)
-    data['polarities'] = np.loadtxt(path + '/polarities.dat', skiprows=1)
+    # data['headings'] = np.loadtxt(path + '/headings.dat', skiprows=1)
+    # data['polarities'] = np.loadtxt(path + '/polarities.dat', skiprows=1)
     return data
 
 
@@ -30,7 +30,7 @@ def plot_ring(data, args=[]):
     num_agents = num_robots + num_fish
     cell_degree = 360 / num_cells
     positions = data['positions']
-    polarities = data['polarities']
+    # polarities = data['polarities']
 
     th1 = np.linspace(0, 2 * np.pi, 100)
     r1 = 50 + np.zeros(len(th1))
@@ -78,6 +78,7 @@ def plot_ring(data, args=[]):
             plt.polar(np.deg2rad(fpos_x), fpos_y, 'b.', markersize=markersize, marker='o', label='Fish')
 
         ax = plt.gca()
+        ax.set_theta_direction(-1)
         thetaticks = np.linspace(0, 360 - 360 / num_cells, num_cells)
         thetatick_labels = np.array(range(num_cells))
         ax.set_xticks(np.deg2rad(thetaticks))
@@ -94,8 +95,8 @@ def plot_ring(data, args=[]):
         plt.clf()
     if args and args.with_video:
         vwriter.finish()
-
-    plot_polarities(polarities, args)
+        
+    # plot_polarities(polarities, args)
 
 
 if __name__ == '__main__':
