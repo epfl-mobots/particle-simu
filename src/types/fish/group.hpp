@@ -122,6 +122,7 @@ namespace samsar {
             int& group_id() { return group_id_; }
             int center_of_mass() const { return center_of_mass_; }
             int& center_of_mass() { return center_of_mass_; }
+            WeightFunc weight_func() const { return weight_func_; }
             WeightFunc& weight_func() { return weight_func_; }
             std::vector<FishType>& fish() { return fish_; }
             std::vector<FishType> fish() const { return fish_; }

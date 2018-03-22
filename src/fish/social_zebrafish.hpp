@@ -22,6 +22,9 @@ namespace samsar {
             static constexpr size_t cells_backward = 5;
 
             static constexpr float prob_obey = 1.0f;
+            static constexpr float prob_move = 0.9f;
+
+            static constexpr size_t direction_delay = 2;
         };
     } // namespace defaults
 
@@ -39,8 +42,11 @@ namespace samsar {
                   cells_forward_(Params::social_zebrafish::cells_forward),
                   cells_backward_(Params::social_zebrafish::cells_backward),
                   prob_obey_(Params::social_zebrafish::prob_obey),
+                  prob_move_(Params::social_zebrafish::prob_move),
+                  direction_delay_(Params::social_zebrafish::direction_delay),
                   next_heading_(this->heading_),
-                  heading_change_(false)
+                  heading_change_(false),
+                  delay_(0)
             {
                 this->min_speed() = Params::social_zebrafish::min_speed;
                 this->max_speed() = Params::social_zebrafish::max_speed;
@@ -52,7 +58,9 @@ namespace samsar {
                 // this copy constructor explicitly skips the copying
                 // of the current_group_ vector, otherwise an infinite
                 // recursive copying will be invoked
-                current_group_ = Group();
+                Group g = Group();
+                g.weight_func() = current_group_.weight_func();
+                current_group_ = g;
 
                 this->heading_ = sz.heading();
                 this->position_ = sz.position();
@@ -67,7 +75,10 @@ namespace samsar {
                 cells_forward_ = sz.cells_forward();
                 cells_backward_ = sz.cells_backward();
                 prob_obey_ = sz.prob_obey();
+                prob_move_ = sz.prob_move();
+                direction_delay_ = sz.direction_delay();
                 next_heading_ = sz.next_heading();
+                delay_ = sz.delay();
                 heading_change_ = sz.heading_change();
             }
 
@@ -75,7 +86,10 @@ namespace samsar {
             {
                 this->heading_ = next_heading_;
 
-                if (heading_change_)
+                if (heading_change_ && delay_ == 1)
+                    return; // heading change costs one timestep
+
+                if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_move_)
                     return;
 
                 this->position() = (this->position() + this->speed() * this->heading()) % static_cast<int>(num_cells_);
@@ -94,8 +108,12 @@ namespace samsar {
                 }
 
                 if (heading_change_) {
-                    heading_change_ = false;
-                    return;
+                    if (delay_++ >= direction_delay_) {
+                        delay_ = 0;
+                        heading_change_ = false;
+                    }
+                    else
+                        return;
                 }
 
                 if (current_group_.size() > 0) {
@@ -183,15 +201,22 @@ namespace samsar {
             size_t cells_forward() const { return cells_forward_; }
             size_t cells_backward() const { return cells_backward_; }
             float prob_obey() const { return prob_obey_; }
-            Heading next_heading() const { return next_heading_; }
+            float prob_move() const { return prob_move_; }
+            size_t direction_delay() const { return direction_delay_; }
             bool heading_change() const { return heading_change_; }
+
+            Heading next_heading() const { return next_heading_; }
+            bool delay() const { return delay_; }
 
             size_t& num_cells() { return num_cells_; }
             size_t& group_threshold() { return group_threshold_; }
             size_t& cells_forward() { return cells_forward_; }
             size_t& cells_backward() { return cells_backward_; }
             float& prob_obey() { return prob_obey_; }
+            float& prob_move() { return prob_move_; }
+            size_t& direction_delay() { return direction_delay_; }
             Heading& next_heading() { return next_heading_; }
+            bool& delay() { return delay_; }
             bool& heading_change() { return heading_change_; }
 
             Group current_group() const { return current_group_; }
@@ -202,10 +227,13 @@ namespace samsar {
             size_t cells_forward_;
             size_t cells_backward_;
             float prob_obey_;
+            float prob_move_;
+            size_t direction_delay_;
             Heading next_heading_;
+            bool heading_change_;
 
             Group current_group_;
-            bool heading_change_;
+            size_t delay_;
         }; // namespace fish
     } // namespace fish
 } // namespace samsar
