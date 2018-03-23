@@ -18,19 +18,18 @@ from waflib import Logs
 import eigen
 import boost
 
+
 def options(opt):
     opt.load('compiler_cxx waf_unit_test')
-    opt.load('compiler_c')
-    opt.load('eigen')
+#    opt.load('eigen')
     opt.load('boost')
 
 def configure(conf):
     conf.load('compiler_cxx waf_unit_test')
-    conf.load('compiler_c')
-    conf.load('eigen')
+#    conf.load('eigen')
     conf.load('boost')
 
-    conf.check_eigen()
+#    conf.check_eigen()
     conf.check_boost(lib='regex system filesystem', min_version='1.46')
     conf.env.append_value('INCLUDES', [incdir])
 
@@ -54,11 +53,15 @@ def configure(conf):
     print(conf.env['CXXFLAGS'])
 
 def build(bld):
+    srcs = ['examples/fish_ring_example.cpp']
+    incs = ['src/']
+
+    nodes = bld.path.ant_glob('src/**/*.cpp', src=True, dir=False)
+    for n in nodes:
+        srcs += [n.bldpath()]
+
     bld.program(features = 'cxx',
-        source='src/examples/ring_example.cpp',
+        source=srcs,
+        includes=incs,
         uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='ring_example')
-    bld.program(features = 'cxx',
-        source='src/examples/social_fish_example.cpp',
-        uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='social_fish_example')
+        target='fish_ring_example')

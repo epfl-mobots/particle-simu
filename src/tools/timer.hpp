@@ -6,6 +6,7 @@
 
 namespace samsar {
     namespace tools {
+
         class Timer {
         public:
             void start() { start_time_ = std::chrono::high_resolution_clock::now(); }
@@ -20,6 +21,7 @@ namespace samsar {
             std::chrono::high_resolution_clock::time_point start_time_;
             std::chrono::high_resolution_clock::time_point stop_time_;
         };
+
     } // namespace tools
 } // namespace samsar
 

@@ -1,17 +1,7 @@
-#ifndef HEADING_HPP
-#define HEADING_HPP
-
-#include <random/random_generator.hpp>
-
-#include <cmath>
-#include <cstdint>
-#include <map>
-#include <string>
-#include <vector>
+#include "heading.hpp"
 
 namespace samsar {
     namespace types {
-        enum Heading : int { COUNTER_CLOCKWISE = -1, UNDEFINED = 0, CLOCKWISE = 1 };
 
         std::string to_str(Heading heading)
         {
@@ -23,16 +13,6 @@ namespace samsar {
             default:
                 return "Undefined";
             }
-        }
-
-        template <typename T> Heading to_heading(T candidate)
-        {
-            if (candidate == 0)
-                return Heading::UNDEFINED;
-            else if (candidate < 0)
-                return Heading::COUNTER_CLOCKWISE;
-            else
-                return Heading::CLOCKWISE;
         }
 
         Heading reverse_heading(Heading hdg) { return to_heading(-1 * static_cast<int>(hdg)); }
@@ -50,5 +30,3 @@ namespace samsar {
 
     } // namespace types
 } // namespace samsar
-
-#endif

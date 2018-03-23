@@ -8,25 +8,28 @@
 #include <string>
 
 namespace samsar {
+
+    namespace simulation {
+        class Simulation;
+    }
+
     namespace stat {
-        template <typename Params> class StatBase {
+
+        class StatBase {
         public:
             StatBase() {}
+            virtual ~StatBase();
 
-            template <typename Simu> void operator()(const Simu&) {}
+            virtual void operator()(const std::shared_ptr<simulation::Simulation>) = 0;
 
         protected:
-            std::shared_ptr<std::ofstream> log_file_;
+            void _create_log_file(
+                std::shared_ptr<simulation::Simulation> s, const std::string& filename);
 
-            template <typename Simu> void _create_log_file(const Simu& s, const std::string& filename)
-            {
-                if (!log_file_ && s->stats_enabled()) {
-                    std::string abs_path = s->res_dir() + "/" + filename.c_str();
-                    log_file_ = std::make_shared<std::ofstream>(abs_path);
-                    assert(log_file_->good());
-                }
-            }
+            mutable std::shared_ptr<std::ofstream> _log_file;
         };
+
+        using StatBasePtr = std::shared_ptr<StatBase>;
     } // namespace stat
 } // namespace samsar
 
