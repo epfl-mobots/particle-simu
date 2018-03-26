@@ -2,6 +2,9 @@ build/
 *.dat
 .idea/
 
+# skip simulation output folders
+*_*-*-*_*_*_*
+
 # project specific
 sim_*
 
