@@ -13,7 +13,7 @@ sns.set_style("darkgrid")
 
 class PolarityWriter:
     def __init__(self):
-        self.__ofile = open('sum_heading.dat', 'w')
+        self.__ofile = open('polarities.dat', 'w')
         self.__ofile.write('#iteration polarity\n')
 
     def write(self, line):
@@ -99,6 +99,9 @@ if __name__ == '__main__':
     if args.path:
         data = load_data(args.path)
         sum_heading = calculate_sum_heading(args, data)
+        with open('mean_polarity.dat', 'w') as f:
+            mean_p = np.mean(sum_heading[:, 1])
+            f.write(str(mean_p) + '\n')
         if args.hist:
             plot_hist(args, sum_heading)
     if args.compare:
