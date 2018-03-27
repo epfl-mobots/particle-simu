@@ -11,7 +11,7 @@ namespace samsar {
 
         class Simulation {
         public:
-            Simulation();
+            Simulation(bool stats_enable = true);
             Simulation(const Settings& settings);
             virtual ~Simulation();
 

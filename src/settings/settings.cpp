@@ -16,4 +16,9 @@ namespace samsar {
 
     size_t Settings::size() const { return _settings.size(); }
 
+    const std::map<std::string, SettingsInterfacePtr>& Settings::get_map() const
+    {
+        return _settings;
+    }
+
 } // namespace samsar

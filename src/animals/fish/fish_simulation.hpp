@@ -9,7 +9,7 @@ namespace samsar {
 
         class FishSimulation : public Simulation {
         public:
-            FishSimulation();
+            FishSimulation(bool stats_enable = true);
             FishSimulation(const Settings& settings);
             FishSimulation(const std::vector<FishIndividual>& fish);
 

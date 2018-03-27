@@ -67,6 +67,8 @@ namespace samsar {
 
         size_t size() const;
 
+        const std::map<std::string, SettingsInterfacePtr>& get_map() const;
+
     private:
         std::map<std::string, SettingsInterfacePtr> _settings;
     };

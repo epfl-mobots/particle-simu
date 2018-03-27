@@ -7,7 +7,7 @@
 namespace samsar {
     namespace simulation {
 
-        FishSimulation::FishSimulation()
+        FishSimulation::FishSimulation(bool stats_enable) : Simulation(stats_enable)
         {
             _sim_settings.add_setting("num_fish", 6)
                 .add_setting("num_robot", 0)
@@ -30,18 +30,21 @@ namespace samsar {
                 if (f.is_robot())
                     ++count;
             _sim_settings.add_setting("num_agents", _fish.size() + count);
+            _sim_settings.add_setting("num_robot", count);
+            _sim_settings.add_setting("num_fish", _fish.size() - count);
         }
 
         void FishSimulation::_init()
         {
-            size_t num_agents = _sim_settings.get_field<size_t>("num_fish")->value()
-                + _sim_settings.get_field<size_t>("num_robot")->value();
+            int num_agents = _sim_settings.get_field<int>("num_fish")->value()
+                + _sim_settings.get_field<int>("num_robot")->value();
             _sim_settings.add_setting("num_agents", num_agents);
 
-            _fish.resize(num_agents);
+            _fish.resize(static_cast<size_t>(num_agents));
             for (size_t i = 0; i < _fish.size(); ++i)
                 _fish[i].id() = static_cast<int>(i);
-            for (size_t i = 0; i < _sim_settings.get_field<size_t>("num_robot")->value(); ++i)
+            for (size_t i = 0;
+                 i < static_cast<size_t>(_sim_settings.get_field<int>("num_robot")->value()); ++i)
                 _fish[i].is_robot() = true;
         }
 

@@ -157,7 +157,7 @@ namespace samsar {
             std::vector<FishIndividual> fish = fsim->fish();
 
             int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
-            size_t group_threshold = _fish_settings.get_field<size_t>("group_threshold")->value();
+            int group_threshold = _fish_settings.get_field<int>("group_threshold")->value();
             int cells_forward = _fish_settings.get_field<int>("cells_forward")->value();
             int cells_backward = _fish_settings.get_field<int>("cells_backward")->value();
 
@@ -181,7 +181,7 @@ namespace samsar {
             }
 
             _my_group_idcs.clear();
-            if (candidate.size() >= group_threshold)
+            if (candidate.size() >= static_cast<size_t>(group_threshold))
                 _my_group_idcs = candidate;
         }
 

@@ -52,16 +52,26 @@ def configure(conf):
     conf.env['CXXFLAGS'] = conf.env['CXXFLAGS'] + all_flags.split(' ')
     print(conf.env['CXXFLAGS'])
 
+    conf.env.LIB_SAMSAR = ['samsar']
+    conf.env.LIBPATH_SAMSAR = [os.path.join(os.getcwd(), 'build/samsar')]
+    conf.env.INCLUDES_SAMSAR = [os.path.join(os.getcwd(), 'src/')]
+
 def build(bld):
-    srcs = ['examples/fish_ring_example.cpp']
+    srcs = []
     incs = ['src/']
 
     nodes = bld.path.ant_glob('src/**/*.cpp', src=True, dir=False)
     for n in nodes:
         srcs += [n.bldpath()]
 
-    bld.program(features = 'cxx',
+    bld.stlib(features='cxx cxxstlib',
         source=srcs,
+        cxxflags=['-O3', '-fPIC', '-rdynamic'],
+        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
+        target='samsar/samsar')
+
+    bld.program(features = 'cxx',
+        source=srcs+['examples/fish_ring_example.cpp'],
         includes=incs,
-        uselib = 'BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
+        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
         target='fish_ring_example')
