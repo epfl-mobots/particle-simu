@@ -20,8 +20,10 @@ namespace samsar {
             {
                 auto fsim = std::static_pointer_cast<FishSimulation>(sim);
                 int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
-                int cells_forward = ff.fish_settings().get_field<int>("cells_forward")->value();
-                int cells_backward = ff.fish_settings().get_field<int>("cells_backward")->value();
+                int cells_forward
+                    = ff.individual_settings().get_field<int>("cells_forward")->value();
+                int cells_backward
+                    = ff.individual_settings().get_field<int>("cells_backward")->value();
 
                 std::vector<int> forward;
                 boost::push_back(forward,
@@ -57,7 +59,8 @@ namespace samsar {
 
         FishIndividual::FishIndividual()
         {
-            _fish_settings.add_setting("max_neighbors", 3)
+            _individual_settings
+                // .add_setting("max_neighbors", 3)
                 .add_setting("prob_obey", 1.0f)
                 .add_setting("prob_move", 0.9f)
                 .add_setting("min_speed", 1)
@@ -66,25 +69,26 @@ namespace samsar {
                 .add_setting("cells_forward", 5)
                 .add_setting("cells_backward", 5)
                 .add_setting("sum_weight", std::vector<float>{0.3f, -2.0f})
-                .add_setting("heading_robot", Heading::CLOCKWISE)
                 .add_setting("heading_change_duration", 2);
             _init();
         }
 
         FishIndividual::FishIndividual(const Settings& settings)
         {
-            this->_fish_settings = settings;
+            _individual_settings = settings;
             _init();
         }
 
         FishIndividual::~FishIndividual() {}
 
+        void FishIndividual::force_init() { _init(); }
+
         void FishIndividual::_init()
         {
-            _fish_settings.add_setting(
-                "initial_prob_obey", _fish_settings.get_field<float>("prob_obey")->value());
-            _speed.max_speed = _fish_settings.get_field<int>("max_speed")->value();
-            _speed.min_speed = _fish_settings.get_field<int>("min_speed")->value();
+            _individual_settings.add_setting(
+                "initial_prob_obey", _individual_settings.get_field<float>("prob_obey")->value());
+            _speed.max_speed = _individual_settings.get_field<int>("max_speed")->value();
+            _speed.min_speed = _individual_settings.get_field<int>("min_speed")->value();
             _next_heading = Heading::UNDEFINED;
             _heading = random_heading();
             _speed.current = tools::random_in_range(_speed.min_speed, _speed.max_speed);
@@ -97,11 +101,11 @@ namespace samsar {
             _my_group(sim);
             _social_influence(sim);
 
-            float prob_obey = _fish_settings.get_field<float>("prob_obey")->value();
+            float prob_obey = _individual_settings.get_field<float>("prob_obey")->value();
 
             if (_heading_change) {
                 if (_heading_change_time++
-                    >= _fish_settings.get_field<int>("heading_change_duration")->value()) {
+                    >= _individual_settings.get_field<int>("heading_change_duration")->value()) {
                     _heading_change_time = 0;
                     _heading_change = false;
                 }
@@ -113,10 +117,11 @@ namespace samsar {
                 FishGroup fg(_my_group_idcs);
                 _next_heading = to_heading(fg.weighted_heading(sim, *this,
                     std::make_shared<WeightFunc>(
-                        _fish_settings.get_field<std::vector<float>>("sum_weight")->value())));
+                        _individual_settings.get_field<std::vector<float>>("sum_weight")
+                            ->value())));
 
                 if (tools::random_in_range(0.0f, 1.0f)
-                    < 1 - _fish_settings.get_field<float>("prob_obey")->value()) {
+                    < 1 - _individual_settings.get_field<float>("prob_obey")->value()) {
                     _next_heading = reverse_heading(
                         fg.sum_heading(std::static_pointer_cast<FishSimulation>(sim)->fish()));
                     _heading_change = true;
@@ -142,7 +147,7 @@ namespace samsar {
                 return; // heading change costs one timestep
 
             if (tools::random_in_range(0.0f, 1.0f)
-                < 1 - _fish_settings.get_field<float>("prob_move")->value())
+                < 1 - _individual_settings.get_field<float>("prob_move")->value())
                 return;
 
             int num_cells = sim->sim_settings().get_field<int>("num_cells")->value();
@@ -157,9 +162,9 @@ namespace samsar {
             std::vector<FishIndividual> fish = fsim->fish();
 
             int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
-            int group_threshold = _fish_settings.get_field<int>("group_threshold")->value();
-            int cells_forward = _fish_settings.get_field<int>("cells_forward")->value();
-            int cells_backward = _fish_settings.get_field<int>("cells_backward")->value();
+            int group_threshold = _individual_settings.get_field<int>("group_threshold")->value();
+            int cells_forward = _individual_settings.get_field<int>("cells_forward")->value();
+            int cells_backward = _individual_settings.get_field<int>("cells_backward")->value();
 
             std::vector<int> pos;
             boost::push_back(pos,
@@ -191,11 +196,11 @@ namespace samsar {
             std::vector<FishIndividual> fish = fsim->fish();
 
             int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
-            int cells_forward = _fish_settings.get_field<int>("cells_forward")->value();
+            int cells_forward = _individual_settings.get_field<int>("cells_forward")->value();
 
             if (_my_group_idcs.size() == 0) {
-                _fish_settings.get_field<float>("prob_obey")->value()
-                    = _fish_settings.get_field<float>("initial_prob_obey")->value();
+                _individual_settings.get_field<float>("prob_obey")->value()
+                    = _individual_settings.get_field<float>("initial_prob_obey")->value();
                 return;
             }
 
@@ -218,8 +223,8 @@ namespace samsar {
                 ++neighs;
             }
 
-            _fish_settings.get_field<float>("prob_obey")->value()
-                = _fish_settings.get_field<float>("initial_prob_obey")->value()
+            _individual_settings.get_field<float>("prob_obey")->value()
+                = _individual_settings.get_field<float>("initial_prob_obey")->value()
                 * (1 - 1.0f / static_cast<float>(std::pow(neighs + 1, 4)));
         }
 

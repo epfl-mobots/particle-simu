@@ -18,17 +18,21 @@ namespace samsar {
         }
 
         FishSimulation::FishSimulation(const Settings& settings)
+            : Simulation(settings.get_field<bool>("stats_enabled")->value())
         {
             _sim_settings = settings;
             _init();
         }
 
-        FishSimulation::FishSimulation(const std::vector<FishIndividual>& fish) : _fish(fish)
+        FishSimulation::FishSimulation(
+            const Settings& settings, const std::vector<FishIndividual>& fish)
+            : Simulation(settings.get_field<bool>("stats_enabled")->value()), _fish(fish)
         {
             size_t count = 0;
             for (const auto& f : _fish)
                 if (f.is_robot())
                     ++count;
+            _sim_settings = settings;
             _sim_settings.add_setting("num_agents", _fish.size() + count);
             _sim_settings.add_setting("num_robot", count);
             _sim_settings.add_setting("num_fish", _fish.size() - count);

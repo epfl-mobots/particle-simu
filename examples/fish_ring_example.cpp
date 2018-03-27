@@ -17,7 +17,18 @@ int main()
     using namespace simulation;
     using namespace stat;
 
-    FishSimulation sim;
+    int num_cells = 40;
+    int num_robot = 0;
+    int num_fish = 6;
+
+    Settings sim_set;
+    sim_set.add_setting("stats_enabled", true)
+        .add_setting("num_fish", num_fish)
+        .add_setting("num_robot", num_robot)
+        .add_setting("num_cells", num_cells)
+        .add_setting("sim_time", 5400);
+
+    FishSimulation sim(sim_set);
     sim.add_stat(std::make_shared<PositionStat>())
         .add_stat(std::make_shared<PolarityStat>())
         .add_stat(std::make_shared<PositionStat>())

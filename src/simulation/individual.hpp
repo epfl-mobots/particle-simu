@@ -13,7 +13,7 @@ namespace samsar {
 
         template <typename PositionType = float, typename SpeedType = float> class Individual {
         public:
-            Individual() {}
+            Individual() : _is_robot(false) {}
 
             virtual void stimulate(const std::shared_ptr<Simulation>) = 0;
             virtual void move(const std::shared_ptr<Simulation>) = 0;
@@ -30,11 +30,11 @@ namespace samsar {
             bool is_robot() const { return _is_robot; }
             bool& is_robot() { return _is_robot; }
 
-            Settings& fish_settings() { return _fish_settings; }
-            Settings fish_settings() const { return _fish_settings; }
+            Settings& individual_settings() { return _individual_settings; }
+            Settings individual_settings() const { return _individual_settings; }
 
         protected:
-            Settings _fish_settings;
+            Settings _individual_settings;
             Position<PositionType> _position;
             Speed<SpeedType> _speed;
 

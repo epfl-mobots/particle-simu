@@ -24,6 +24,8 @@ namespace samsar {
             Heading& next_heading();
             size_t group_size() const;
 
+            void force_init();
+
         private:
             void _init();
             void _my_group(const std::shared_ptr<Simulation> sim);

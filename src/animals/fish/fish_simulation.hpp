@@ -11,7 +11,7 @@ namespace samsar {
         public:
             FishSimulation(bool stats_enable = true);
             FishSimulation(const Settings& settings);
-            FishSimulation(const std::vector<FishIndividual>& fish);
+            FishSimulation(const Settings& settings, const std::vector<FishIndividual>& fish);
 
             virtual void spin_once() override;
 

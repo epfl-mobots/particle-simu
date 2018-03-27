@@ -2,14 +2,12 @@
 
 import argparse
 import numpy as np
-import cmath
+
 
 def load_data(path):
     data = dict()
     data['positions'] = np.loadtxt(path)
     return data
-
-
 
 
 def calc_cohesion(data):
@@ -36,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--num-cells', '-n',
                         type=int,
                         help='number of cells for the ring',
-                        default=2)
+                        default=40)
     args = parser.parse_args()
 
     if args.path:
