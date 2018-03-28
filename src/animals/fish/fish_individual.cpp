@@ -220,7 +220,7 @@ namespace samsar {
             for (int p : pos) {
                 if (ipos.find(p) == ipos.end())
                     continue;
-                ++neighs;
+                ++neighs; // we count the focal fish
             }
 
             _individual_settings.get_field<float>("prob_obey")->value()

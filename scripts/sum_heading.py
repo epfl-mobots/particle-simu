@@ -13,7 +13,7 @@ sns.set_style("darkgrid")
 
 class PolarityWriter:
     def __init__(self):
-        self.__ofile = open('polarities.dat', 'w')
+        self.__ofile = open('sum_headings.dat', 'w')
         self.__ofile.write('#iteration polarity\n')
 
     def write(self, line):
@@ -32,7 +32,7 @@ def count_consecutive(values):
     hist_vals = []
     sum = 1
     for i in range(1, iters):
-        if values[i, 1] == values[i-1, 1]:
+        if np.sign(values[i, 1]) == np.sign(values[i-1, 1]):
             sum += 1
         else:
             hist_vals.append(sum)
@@ -43,15 +43,16 @@ def count_consecutive(values):
 def plot_hist(args, sum_heading):
     hist_vals = count_consecutive(sum_heading)
     plt.figure(figsize=[8, 6], dpi=args.dpi)
-    sns.distplot(hist_vals, kde=True, rug=False, norm_hist=False)
-    plt.yticks(np.arange(0, 1.2, 0.2))
-    plt.xticks([])
+    sns.distplot(hist_vals, kde=False, rug=False, norm_hist=False)
+    # plt.yticks(np.arange(0, 1.2, 0.2))
+    # plt.xticks([])
     # plt.legend()
     plt.show()
 
 
 def calculate_sum_heading(args, data):
     positions = data[:, 1:]
+    num_cells = args.num_cells
     sum_heading = np.int32(np.zeros([np.shape(positions)[0], 2]))
     sum_heading[0, 1] = np.sign(np.sum(positions[1] - positions[0]))
 
@@ -60,7 +61,13 @@ def calculate_sum_heading(args, data):
 
     for i in range(1, np.shape(positions)[0]):
         sum_heading[i, 0] = i
-        sum_heading[i, 1] = np.sign(np.sum(positions[i] - positions[i-1]))
+
+        dist = positions[i] - positions[i-1]
+        for j in range(np.shape(positions)[1]):
+            if dist[j] <= - (num_cells / 2) or dist[j] > num_cells / 2:
+                dist[j] = np.sign(dist[j]) * (num_cells - np.abs(dist[j]))
+        sum_heading[i, 1] = np.sum(dist)
+
         if not args.only_plot:
             pw.write(sum_heading[i])
     return sum_heading
@@ -85,6 +92,10 @@ if __name__ == '__main__':
                         type=int,
                         default=100,
                         help='dpi for the plot/video output')
+    parser.add_argument('--num-cells',
+                        type=int,
+                        default=40,
+                        help='number of cells to divide the ring')
 
     parser.add_argument('--compare',
                         action='store_true',
@@ -92,8 +103,6 @@ if __name__ == '__main__':
     parser.add_argument('--against',
                         type=str,
                         help='file to compare against')
-
-
     args = parser.parse_args()
 
     if args.path:
@@ -105,19 +114,19 @@ if __name__ == '__main__':
         if args.hist:
             plot_hist(args, sum_heading)
     if args.compare:
-        sh1 = calculate_sum_heading(args, load_data(args.path))[:, 1:]
-        sh2 = calculate_sum_heading(args, load_data(args.against))[:, 1:]
-        # sh1 = sh1 / np.linalg.norm(sh1)
-        sh1 = sh1.flatten()
-        # sh2 = sh2 / np.linalg.norm(sh2)
-        sh2 = sh2.flatten()
+        sh1 = calculate_sum_heading(args, load_data(args.path))
+        sh2 = calculate_sum_heading(args, load_data(args.against))
+
+        hist1 = count_consecutive(sh1)
+        hist2 = count_consecutive(sh2)
 
         print()
-        ts = stats.ks_2samp(sh1, sh2)
+        ts = stats.ks_2samp(hist1, hist2)
         print(ts)
 
-        ts = stats.mannwhitneyu(sh1, sh2)
+        ts = stats.mannwhitneyu(hist1, hist2)
         print(ts)
 
-        ts = stats.wilcoxon(sh1[:1800], sh2[:1800])
+        dim = np.min([len(hist1), len(hist2)])
+        ts = stats.wilcoxon(hist1[:dim], hist2[:dim])
         print(ts)

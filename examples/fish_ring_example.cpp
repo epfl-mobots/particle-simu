@@ -37,6 +37,27 @@ int main()
         .add_stat(std::make_shared<GroupParamsStat>())
         .add_stat(std::make_shared<FishInRingParamsStat>());
 
+    // simply for testing purposes
+    // TODO: remove in future versions
+//#define TESTING
+#ifdef TESTING
+    for (auto& f : sim.fish()) {
+        Settings fish_set;
+        fish_set.add_setting("prob_obey", 1.0f)
+            .add_setting("prob_move", 0.9f)
+            .add_setting("min_speed", 1)
+            .add_setting("max_speed", 1)
+            .add_setting("group_threshold", 3)
+            .add_setting("cells_forward", 5)
+            .add_setting("cells_backward", 5)
+            .add_setting("sum_weight", std::vector<float>{0.3f, -2.f})
+            .add_setting("heading_robot", Heading::CLOCKWISE)
+            .add_setting("heading_change_duration", 2);
+        f.individual_settings() = fish_set;
+        f.force_init();
+    }
+#endif
+
     tools::Timer t;
     t.start();
     sim.spin();
