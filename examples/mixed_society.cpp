@@ -74,7 +74,7 @@ int main(int argc, char** argv)
     agent->is_robot() = true;
     agent->position().x = positions[0][0];
     fish.push_back(agent);
-    for (size_t i = 0; i < positions.size(); ++i)
+    for (size_t i = 0; i < positions.size() - 1; ++i)
         fish.push_back(std::make_shared<actual::FishReplay>(positions[i]));
 
     FishSimulation sim(sim_set, fish);
