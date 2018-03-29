@@ -25,21 +25,21 @@ namespace samsar {
                     *_log_file << "Group threshold: "
                                << fsim->fish()
                                       .at(0)
-                                      .individual_settings()
+                                      ->individual_settings()
                                       .get_field<size_t>("group_threshold")
                                       ->value()
                                << std::endl;
                     *_log_file << "Group cells forward: "
                                << fsim->fish()
                                       .at(0)
-                                      .individual_settings()
+                                      ->individual_settings()
                                       .get_field<size_t>("cells_forward")
                                       ->value()
                                << std::endl;
                     *_log_file << "Group cells backward: "
                                << fsim->fish()
                                       .at(0)
-                                      .individual_settings()
+                                      ->individual_settings()
                                       .get_field<size_t>("cells_backward")
                                       ->value()
                                << std::endl;

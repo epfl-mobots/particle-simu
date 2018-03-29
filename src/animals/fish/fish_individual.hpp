@@ -26,7 +26,7 @@ namespace samsar {
 
             void force_init();
 
-        private:
+        protected:
             void _init();
             void _my_group(const std::shared_ptr<Simulation> sim);
             void _social_influence(const std::shared_ptr<Simulation> sim);

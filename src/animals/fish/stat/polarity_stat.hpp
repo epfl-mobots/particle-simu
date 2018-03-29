@@ -30,7 +30,7 @@ namespace samsar {
                 float sum_heading = 0.0f;
                 const auto& fish = fsim->fish();
                 for (const auto& f : fish)
-                    sum_heading += static_cast<float>(f.heading());
+                    sum_heading += static_cast<float>(f->heading());
                 sum_heading = std::abs(sum_heading);
                 float polarity = sum_heading / num_agents;
 

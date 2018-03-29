@@ -75,3 +75,9 @@ def build(bld):
         includes=incs,
         uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
         target='fish_ring_example')
+
+    bld.program(features = 'cxx',
+        source=srcs+['examples/mixed_society.cpp'],
+        includes=incs,
+        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
+        target='mixed_society')

@@ -7,6 +7,7 @@
 #include <boost/range/irange.hpp>
 
 #include <tools/filesystem.hpp>
+#include <tools/math.hpp>
 #include <tools/timer.hpp>
 
 #endif

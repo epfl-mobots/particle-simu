@@ -25,7 +25,7 @@ namespace samsar {
 
                 *_log_file << fsim->iteration() << " ";
                 for (const auto& f : fsim->fish())
-                    *_log_file << f.heading() << " ";
+                    *_log_file << f->heading() << " ";
                 *_log_file << std::endl;
             }
         };

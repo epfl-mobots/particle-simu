@@ -11,17 +11,17 @@ namespace samsar {
         public:
             FishSimulation(bool stats_enable = true);
             FishSimulation(const Settings& settings);
-            FishSimulation(const Settings& settings, const std::vector<FishIndividual>& fish);
+            FishSimulation(const Settings& settings, const std::vector<FishIndividualPtr>& fish);
 
             virtual void spin_once() override;
 
-            std::vector<FishIndividual> fish() const;
-            std::vector<FishIndividual>& fish();
+            std::vector<FishIndividualPtr> fish() const;
+            std::vector<FishIndividualPtr>& fish();
 
         private:
             void _init();
 
-            std::vector<FishIndividual> _fish;
+            std::vector<FishIndividualPtr> _fish;
         };
 
         using FishSimulationPtr = std::shared_ptr<FishSimulation>;

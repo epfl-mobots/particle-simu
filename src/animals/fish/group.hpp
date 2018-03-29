@@ -20,9 +20,9 @@ namespace samsar {
             {
                 std::map<int, std::vector<size_t>> ipos;
                 for (size_t i = 0; i < fish.size(); ++i) {
-                    if (ipos.find(fish[i].position().x) == ipos.end())
-                        ipos[fish[i].position().x] = std::vector<size_t>();
-                    ipos.at(fish[i].position().x).push_back(i);
+                    if (ipos.find(fish[i]->position().x) == ipos.end())
+                        ipos[fish[i]->position().x] = std::vector<size_t>();
+                    ipos.at(fish[i]->position().x).push_back(i);
                 }
                 return ipos;
             }
@@ -36,7 +36,7 @@ namespace samsar {
                 virtual ~WeightFunc() {}
 
                 virtual float operator()(const std::shared_ptr<Simulation> sim,
-                    const FishIndividual& ff, const FishIndividual& f) const = 0;
+                    const FishIndividualPtr& ff, const FishIndividualPtr& f) const = 0;
 
                 std::vector<float> _w;
             };
@@ -49,9 +49,9 @@ namespace samsar {
             bool has(int id) const;
             void clear();
 
-            Heading sum_heading(const std::vector<FishIndividual>& fish) const;
+            Heading sum_heading(const std::vector<FishIndividualPtr>& fish) const;
             Heading weighted_heading(const std::shared_ptr<Simulation> sim,
-                const FishIndividual& focal_fish,
+                const FishIndividualPtr& focal_fish,
                 const std::shared_ptr<defaults::WeightFunc>& weight_func) const;
 
             size_t size() const;

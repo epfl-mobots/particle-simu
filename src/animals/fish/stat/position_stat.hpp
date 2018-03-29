@@ -24,8 +24,8 @@ namespace samsar {
                     *_log_file << "#iteration fish1_position fish2_position ..." << std::endl;
 
                 *_log_file << fsim->iteration() << " ";
-                for (const FishIndividual& f : fsim->fish())
-                    *_log_file << f.position().x << " ";
+                for (const FishIndividualPtr& f : fsim->fish())
+                    *_log_file << f->position().x << " ";
                 *_log_file << std::endl;
             }
         };

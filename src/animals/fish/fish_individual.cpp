@@ -15,37 +15,37 @@ namespace samsar {
                 assert(w.size() == 2);
             }
 
-            float operator()(const std::shared_ptr<Simulation> sim, const FishIndividual& ff,
-                const FishIndividual& f) const override
+            float operator()(const std::shared_ptr<Simulation> sim, const FishIndividualPtr& ff,
+                const FishIndividualPtr& f) const override
             {
                 auto fsim = std::static_pointer_cast<FishSimulation>(sim);
                 int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
                 int cells_forward
-                    = ff.individual_settings().get_field<int>("cells_forward")->value();
+                    = ff->individual_settings().get_field<int>("cells_forward")->value();
                 int cells_backward
-                    = ff.individual_settings().get_field<int>("cells_backward")->value();
+                    = ff->individual_settings().get_field<int>("cells_backward")->value();
 
                 std::vector<int> forward;
                 boost::push_back(forward,
-                    boost::irange(ff.position().x + ff.heading() * cells_forward,
-                        ff.position().x - ff.heading(), -ff.heading()));
+                    boost::irange(ff->position().x + ff->heading() * cells_forward,
+                        ff->position().x - ff->heading(), -ff->heading()));
                 std::vector<int> backward;
                 boost::push_back(backward,
-                    boost::irange(ff.position().x - ff.heading(),
-                        ff.position().x + (-ff.heading() * cells_backward) - ff.heading(),
-                        -ff.heading()));
+                    boost::irange(ff->position().x - ff->heading(),
+                        ff->position().x + (-ff->heading() * cells_backward) - ff->heading(),
+                        -ff->heading()));
                 std::for_each(forward.begin(), forward.end(),
                     [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
                 std::for_each(backward.begin(), backward.end(),
                     [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
 
-                const auto itf = std::find(forward.begin(), forward.end(), f.position().x);
+                const auto itf = std::find(forward.begin(), forward.end(), f->position().x);
                 if (!(forward.end() == itf)) {
                     auto idx = std::distance(forward.begin(), itf);
                     return std::exp(_w[0] * idx);
                 }
 
-                const auto itb = std::find(backward.begin(), backward.end(), f.position().x);
+                const auto itb = std::find(backward.begin(), backward.end(), f->position().x);
                 if (!(backward.end() == itb)) {
                     auto idx = std::distance(backward.begin(), itb);
                     return std::exp(_w[1] * idx);
@@ -115,10 +115,11 @@ namespace samsar {
 
             if (_my_group_idcs.size() > 0) {
                 FishGroup fg(_my_group_idcs);
-                _next_heading = to_heading(fg.weighted_heading(sim, *this,
-                    std::make_shared<WeightFunc>(
-                        _individual_settings.get_field<std::vector<float>>("sum_weight")
-                            ->value())));
+                _next_heading
+                    = to_heading(fg.weighted_heading(sim, std::make_shared<FishIndividual>(*this),
+                        std::make_shared<WeightFunc>(
+                            _individual_settings.get_field<std::vector<float>>("sum_weight")
+                                ->value())));
 
                 if (tools::random_in_range(0.0f, 1.0f)
                     < 1 - _individual_settings.get_field<float>("prob_obey")->value()) {
@@ -159,7 +160,7 @@ namespace samsar {
         void FishIndividual::_my_group(const std::shared_ptr<Simulation> sim)
         {
             auto fsim = std::static_pointer_cast<FishSimulation>(sim);
-            std::vector<FishIndividual> fish = fsim->fish();
+            std::vector<FishIndividualPtr> fish = fsim->fish();
 
             int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
             int group_threshold = _individual_settings.get_field<int>("group_threshold")->value();
@@ -193,7 +194,7 @@ namespace samsar {
         void FishIndividual::_social_influence(const std::shared_ptr<Simulation> sim)
         {
             auto fsim = std::static_pointer_cast<FishSimulation>(sim);
-            std::vector<FishIndividual> fish = fsim->fish();
+            std::vector<FishIndividualPtr> fish = fsim->fish();
 
             int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
             int cells_forward = _individual_settings.get_field<int>("cells_forward")->value();

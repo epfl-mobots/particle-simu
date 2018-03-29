@@ -19,26 +19,26 @@ namespace samsar {
         std::vector<size_t>& FishGroup::idcs() { return _idcs; }
         std::vector<size_t> FishGroup::idcs() const { return _idcs; }
 
-        Heading FishGroup::sum_heading(const std::vector<FishIndividual>& fish) const
+        Heading FishGroup::sum_heading(const std::vector<FishIndividualPtr>& fish) const
         {
             int sum = 0;
             for (const auto& i : _idcs)
-                sum += fish[i].heading();
+                sum += fish[i]->heading();
             return to_heading(sum);
         }
 
         Heading FishGroup::weighted_heading(const std::shared_ptr<Simulation> sim,
-            const FishIndividual& focal_fish,
+            const FishIndividualPtr& focal_fish,
             const std::shared_ptr<defaults::WeightFunc>& weight_func) const
         {
             auto fsim = std::static_pointer_cast<FishSimulation>(sim);
-            std::vector<FishIndividual> fish = fsim->fish();
+            std::vector<FishIndividualPtr> fish = fsim->fish();
 
             float sum = 0.0;
             for (size_t i : _idcs) {
-                if (fish[i].id() == focal_fish.id())
+                if (fish[i]->id() == focal_fish->id())
                     continue;
-                sum += (*weight_func)(sim, focal_fish, fish[i]) * fish[i].next_heading();
+                sum += (*weight_func)(sim, focal_fish, fish[i]) * fish[i]->next_heading();
             }
             return to_heading(sum);
         }
