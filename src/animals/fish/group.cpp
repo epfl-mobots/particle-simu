@@ -43,5 +43,20 @@ namespace samsar {
             return to_heading(sum);
         }
 
+        float FishGroup::average_speed(
+            const std::shared_ptr<Simulation> sim, const FishIndividualPtr& focal_fish) const
+        {
+            auto fsim = std::static_pointer_cast<FishSimulation>(sim);
+            std::vector<FishIndividualPtr> fish = fsim->fish();
+
+            float sum = 0.0;
+            for (size_t i : _idcs) {
+                if (fish[i]->id() == focal_fish->id())
+                    continue;
+                sum += fish[i]->speed().current / static_cast<float>(fish.size() - 1);
+            }
+            return sum;
+        }
+
     } // namespace types
 } // namespace samsar

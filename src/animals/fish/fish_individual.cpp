@@ -62,12 +62,13 @@ namespace samsar {
             _individual_settings
                 // .add_setting("max_neighbors", 3)
                 .add_setting("prob_obey", 1.0f)
-                .add_setting("prob_move", 0.9f)
-                .add_setting("min_speed", 1)
-                .add_setting("max_speed", 1)
+                .add_setting("prob_move", 1.0f)
+                .add_setting("prob_change_speed", 0.1f)
                 .add_setting("group_threshold", 3)
                 .add_setting("cells_forward", 5)
                 .add_setting("cells_backward", 5)
+                .add_setting("min_speed", 1)
+                .add_setting("max_speed", 1)
                 .add_setting("sum_weight", std::vector<float>{0.3f, -2.0f})
                 .add_setting("heading_change_duration", 2);
             _init();
@@ -87,13 +88,15 @@ namespace samsar {
         {
             _individual_settings.add_setting(
                 "initial_prob_obey", _individual_settings.get_field<float>("prob_obey")->value());
-            _speed.max_speed = _individual_settings.get_field<int>("max_speed")->value();
-            _speed.min_speed = _individual_settings.get_field<int>("min_speed")->value();
             _next_heading = Heading::UNDEFINED;
             _heading = random_heading();
-            _speed.current = tools::random_in_range(_speed.min_speed, _speed.max_speed);
             _heading_change = false;
             _heading_change_time = 0;
+            _speed.current
+                = tools::random_in_range(_individual_settings.get_field<int>("min_speed")->value(),
+                    _individual_settings.get_field<int>("max_speed")->value());
+            _speed.max_speed = _individual_settings.get_field<int>("max_speed")->value();
+            _speed.min_speed = _individual_settings.get_field<int>("min_speed")->value();
         }
 
         void FishIndividual::stimulate(const std::shared_ptr<Simulation> sim)
@@ -113,6 +116,7 @@ namespace samsar {
                     return;
             }
 
+            // heading
             if (_my_group_idcs.size() > 0) {
                 FishGroup fg(_my_group_idcs);
                 _next_heading
@@ -127,6 +131,10 @@ namespace samsar {
                         fg.sum_heading(std::static_pointer_cast<FishSimulation>(sim)->fish()));
                     _heading_change = true;
                 }
+
+                // mimic group speed
+                _speed.set_speed_bounded(static_cast<int>(
+                    std::round(fg.average_speed(sim, std::make_shared<FishIndividual>(*this)))));
             }
             else {
                 _next_heading = _heading;
@@ -134,6 +142,14 @@ namespace samsar {
                     _next_heading = reverse_heading(_heading);
                     _heading_change = true;
                 }
+            }
+
+            // speed
+            if (tools::random_in_range(0.0f, 1.0f)
+                < _individual_settings.get_field<float>("prob_change_speed")->value()) {
+                _speed.current = tools::random_in_range(
+                    _individual_settings.get_field<int>("min_speed")->value(),
+                    _individual_settings.get_field<int>("max_speed")->value());
             }
 
             if (_next_heading == Heading::UNDEFINED)

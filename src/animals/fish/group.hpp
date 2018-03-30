@@ -53,6 +53,8 @@ namespace samsar {
             Heading weighted_heading(const std::shared_ptr<Simulation> sim,
                 const FishIndividualPtr& focal_fish,
                 const std::shared_ptr<defaults::WeightFunc>& weight_func) const;
+            float average_speed(
+                const std::shared_ptr<Simulation> sim, const FishIndividualPtr& focal_fish) const;
 
             size_t size() const;
             std::vector<size_t>& idcs();

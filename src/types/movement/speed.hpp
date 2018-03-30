@@ -9,6 +9,14 @@ namespace samsar {
 
             bool valid() const { return (current >= min_speed) && (current <= max_speed); }
 
+            void set_speed_bounded(T speed)
+            {
+                if (speed < min_speed)
+                    current = min_speed;
+                if (speed > max_speed)
+                    speed = max_speed;
+            }
+
             T current;
             T min_speed;
             T max_speed;

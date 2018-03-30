@@ -31,6 +31,10 @@ namespace samsar {
                     _next_heading = reverse_heading(_next_heading);
             }
 
+            if (sim->iteration() > 0)
+                _speed.set_speed_bounded(
+                    std::abs(_trajectory[sim->iteration()] - _trajectory[sim->iteration() - 1]));
+
             if (_next_heading == Heading::UNDEFINED)
                 _next_heading = random_heading();
         }
