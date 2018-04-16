@@ -62,12 +62,12 @@ if __name__ == '__main__':
                         type=int,
                         help="number of cells in the forward direction that influence a fish's "
                              "decision to join a group",
-                        default=3)
+                        default=5)
     parser.add_argument('--num_cells_backward',
                         type=int,
                         help="number of cells in the backward direction that influence a fish's "
                              "decision to join a group",
-                        default=3)
+                        default=5)
     args = parser.parse_args()
 
     if args.path:

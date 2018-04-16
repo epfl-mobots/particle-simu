@@ -146,7 +146,7 @@ if __name__ == '__main__':
     parser.add_argument('--fps', '-f',
                         type=int,
                         help='frames per second for the raw data',
-                        default=15)
+                        default=5)
     parser.add_argument('--from-cell',
                         action='store_true',
                         help='discretize a set of cells')

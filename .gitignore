@@ -1,6 +1,7 @@
 build/
 *.dat
 .idea/
+.vscode/
 
 # skip simulation output folders
 *_*-*-*_*_*_*
