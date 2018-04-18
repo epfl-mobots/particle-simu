@@ -32,6 +32,9 @@ namespace samsar {
             Simulation& add_stat(const std::shared_ptr<stat::StatBase> stat);
             Simulation& add_desc(const desc::DescriptorBasePtr desc);
 
+            std::vector<std::shared_ptr<stat::StatBase>> stats();
+            std::vector<std::shared_ptr<desc::DescriptorBase>> descriptors();
+
         protected:
             void _init();
             void _update_stats(const std::shared_ptr<Simulation>) const;

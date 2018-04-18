@@ -75,5 +75,11 @@ namespace samsar {
         Settings Simulation::sim_settings() const { return _sim_settings; }
         Settings& Simulation::sim_settings() { return _sim_settings; }
 
+        std::vector<std::shared_ptr<stat::StatBase>> Simulation::stats() { return _stats; }
+        std::vector<std::shared_ptr<desc::DescriptorBase>> Simulation::descriptors()
+        {
+            return _descriptors;
+        }
+
     } // namespace simulation
 } // namespace samsar
