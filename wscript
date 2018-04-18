@@ -21,15 +21,15 @@ import boost
 
 def options(opt):
     opt.load('compiler_cxx waf_unit_test')
-#    opt.load('eigen')
+    opt.load('eigen')
     opt.load('boost')
 
 def configure(conf):
     conf.load('compiler_cxx waf_unit_test')
-#    conf.load('eigen')
+    conf.load('eigen')
     conf.load('boost')
 
-#    conf.check_eigen()
+    conf.check_eigen()
     conf.check_boost(lib='regex system filesystem', min_version='1.46')
     conf.env.append_value('INCLUDES', [incdir])
 

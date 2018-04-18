@@ -14,7 +14,6 @@ def findLocalMaxima(ar):
     peakVar = -np.inf
     i = -1
     while i < len(ar)-1:
-    #for i in range(len(ar)):
         i += 1
         if peakVar < ar[i]:
             peakVar = ar[i]
@@ -51,7 +50,7 @@ def compute(polarities, args):
 
     cols = list(range(len(tsh)))
     for i in cols:
-        points = np.array(tsh[i]) / 40
+        points = np.array(tsh[i]) / args.num_cells
         lmax = findLocalMaxima(points)
         lmin = findLocalMaxima(1/points)
         loptima = list(lmax) + list(lmin)
@@ -77,6 +76,10 @@ if __name__ == '__main__':
                         type=int,
                         default=0,
                         help='index of the robot in the data')
+    parser.add_argument('--num_cells', '-n',
+                        type=int,
+                        help='number of cells to use in the discretization process',
+                        default=40)
     args = parser.parse_args()
 
     if args.path:

@@ -1,7 +1,3 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
 #include <animals/fish/fish_simulation.hpp>
 #include <animals/fish_replay/fishreplay.hpp>
 #include <tools/timer.hpp>
@@ -13,7 +9,17 @@
 #include <animals/fish/stat/polarity_stat.hpp>
 #include <animals/fish/stat/position_stat.hpp>
 
+#include <Eigen/Dense>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
 using Vec2di = std::vector<std::vector<int>>;
+
+int to_discrete(double val, int upper_lim, int lower_lim = 0)
+{
+    return static_cast<int>(std::floor(val * (upper_lim - lower_lim) + lower_lim));
+}
 
 std::vector<int> split_cols(const std::string& line)
 {
@@ -73,7 +79,35 @@ int main(int argc, char** argv)
     FishIndividualPtr agent = std::make_shared<FishIndividual>();
     agent->is_robot() = true;
     agent->position().x = positions[0][0];
+//#define TESTING
+#ifdef TESTING
+    FishParams params;
+    Eigen::VectorXd x(9);
+    x << 1, 1, 1, 4.09828e-15, 1, 1, 6.4759e-16, 1, 1;
+    params.prob_obey = x(0);
+    params.prob_move = x(1);
+    params.group_threshold = to_discrete(x(2), 6, 2);
+    params.cells_forward = to_discrete(x(3), 8, 1);
+    params.cells_backward = to_discrete(x(4), 8, 1);
+    params.sum_weight
+        = {(static_cast<float>(x(5)) - 0.5f) * 6, (static_cast<float>(x(6)) - 0.5f) * 6};
+    params.influence_alpha = to_discrete(x(7), 8);
+    params.heading_change_duration = to_discrete(x(8), num_cells / 3);
+
+    std::cout << "Current params for the robot: " << std::endl
+              << "prob_obey: " << params.prob_obey << std::endl
+              << "prob_move: " << params.prob_move << std::endl
+              << "group_threshold: " << params.group_threshold << std::endl
+              << "cells_forward: " << params.cells_forward << std::endl
+              << "cells_backward: " << params.cells_backward << std::endl
+              << "sum_weight: " << params.sum_weight[0] << ", " << params.sum_weight[1] << std::endl
+              << "influence_alpha: " << params.influence_alpha << std::endl
+              << "heading_change_duration: " << params.heading_change_duration << std::endl;
+    agent->fish_params() = params;
+    agent->force_init();
+#endif
     fish.push_back(agent);
+
     for (size_t i = 0; i < positions.size() - 1; ++i)
         fish.push_back(std::make_shared<actual::FishReplay>(positions[i]));
 
