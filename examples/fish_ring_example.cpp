@@ -11,6 +11,11 @@
 #include <animals/fish/stat/polarity_stat.hpp>
 #include <animals/fish/stat/position_stat.hpp>
 
+int to_discrete(double val, int upper_lim, int lower_lim = 0)
+{
+    return static_cast<int>(std::floor(val * (upper_lim - lower_lim) + lower_lim));
+}
+
 int main()
 {
     using namespace samsar;
@@ -18,17 +23,41 @@ int main()
     using namespace stat;
 
     int num_cells = 40;
-    int num_robot = 0;
-    int num_fish = 6;
+    int num_robot = 1;
+    int num_fish = 5;
 
-    Settings sim_set;
-    sim_set.add_setting("stats_enabled", true)
-        .add_setting("num_fish", num_fish)
-        .add_setting("num_robot", num_robot)
-        .add_setting("num_cells", num_cells)
-        .add_setting("sim_time", 5400);
+    FishSimSettings set;
+    set.sim_time = 5400;
+    set.stats_enabled = true;
+    set.num_fish = num_fish;
+    set.num_robot = num_robot;
+    set.num_cells = num_cells;
 
-    FishSimulation sim(sim_set);
+    std::vector<FishIndividualPtr> fish;
+    FishIndividualPtr agent = std::make_shared<FishIndividual>();
+    agent->is_robot() = true;
+    agent->id() = 0;
+    fish.push_back(agent);
+
+    FishParams params;
+    params.prob_obey = 1.0f;
+    params.prob_move = 0.901f;
+    params.group_threshold = 3;
+    params.cells_forward = 5;
+    params.cells_backward = 5;
+    params.sum_weight = {0.3f, -2.0f};
+    params.influence_alpha = 4;
+    params.heading_change_duration = 2;
+    fish[0]->fish_params() = params;
+    fish[0]->force_init();
+
+    for (int i = 0; i < num_fish; ++i) {
+        FishIndividualPtr def_agent = std::make_shared<FishIndividual>();
+        def_agent->id() = i;
+        fish.push_back(def_agent);
+    }
+
+    FishSimulation sim(set, fish);
     sim.add_stat(std::make_shared<PositionStat>())
         .add_stat(std::make_shared<PolarityStat>())
         .add_stat(std::make_shared<PositionStat>())
@@ -36,27 +65,6 @@ int main()
         .add_stat(std::make_shared<GroupStat>())
         .add_stat(std::make_shared<GroupParamsStat>())
         .add_stat(std::make_shared<FishInRingParamsStat>());
-
-    // simply for testing purposes
-    // TODO: remove in future versions
-//#define TESTING
-#ifdef TESTING
-    for (auto& f : sim.fish()) {
-        Settings fish_set;
-        fish_set.add_setting("prob_obey", 1.0f)
-            .add_setting("prob_move", 0.9f)
-            .add_setting("min_speed", 1)
-            .add_setting("max_speed", 1)
-            .add_setting("group_threshold", 3)
-            .add_setting("cells_forward", 5)
-            .add_setting("cells_backward", 5)
-            .add_setting("sum_weight", std::vector<float>{0.3f, -2.f})
-            .add_setting("heading_robot", Heading::CLOCKWISE)
-            .add_setting("heading_change_duration", 2);
-        f.individual_settings() = fish_set;
-        f.force_init();
-    }
-#endif
 
     tools::Timer t;
     t.start();

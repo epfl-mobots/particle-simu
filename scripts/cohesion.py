@@ -44,8 +44,12 @@ def calc_cohesion(data):
     num_fish = np.shape(positions)[1]
     of = ListFileWriter('cohesion_contribution.dat', '#iteration fish1_contribution fish2_contribution ...\n')
 
+    if args.timesteps == -1:
+        rows = np.shape(positions)[0]
+    else:
+        rows = args.timesteps
     coh_per_iter = []
-    for idx_r in range(np.shape(positions)[0]):
+    for idx_r in range(rows):
         coh_per_fish = []
         for idx_c in range(num_fish):
             coh_per_fish.append(cohexp(positions[idx_r, idx_c]))
@@ -77,6 +81,10 @@ if __name__ == '__main__':
                         default=40)
     parser.add_argument('--avg',
                         action='store_true',
+                        help='compute the average contribution per fish')
+    parser.add_argument('--timesteps',
+                        type=int,
+                        default=-1,
                         help='compute the average contribution per fish')
     args = parser.parse_args()
 

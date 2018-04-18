@@ -22,7 +22,7 @@ namespace samsar {
         {
             auto fsim = std::static_pointer_cast<simulation::FishSimulation>(sim);
             std::vector<simulation::FishIndividualPtr> fish = fsim->fish();
-            int num_cells = fsim->sim_settings().get_field<int>("num_cells")->value();
+            int num_cells = fsim->fish_sim_settings().num_cells;
 
             if (sim->iteration() < _trajectory.size() - 1) {
                 int diff = _trajectory[sim->iteration() + 1] - _trajectory[sim->iteration()];

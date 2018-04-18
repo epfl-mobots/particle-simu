@@ -59,14 +59,14 @@ int main(int argc, char** argv)
     int num_cells = 40;
     int num_robot = 1;
     int num_fish = static_cast<int>(positions.size()) - 1;
-    int sim_time = static_cast<int>(positions[0].size());
+    uint64_t sim_time = positions[0].size();
 
-    Settings sim_set;
-    sim_set.add_setting("stats_enabled", true)
-        .add_setting("num_fish", num_fish)
-        .add_setting("num_robot", num_robot)
-        .add_setting("num_cells", num_cells)
-        .add_setting("sim_time", sim_time);
+    FishSimSettings set;
+    set.sim_time = sim_time;
+    set.stats_enabled = true;
+    set.num_fish = num_fish;
+    set.num_robot = num_robot;
+    set.num_cells = num_cells;
 
     std::vector<FishIndividualPtr> fish;
 
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < positions.size() - 1; ++i)
         fish.push_back(std::make_shared<actual::FishReplay>(positions[i]));
 
-    FishSimulation sim(sim_set, fish);
+    FishSimulation sim(set, fish);
     sim.add_stat(std::make_shared<PositionStat>())
         .add_stat(std::make_shared<PolarityStat>())
         .add_stat(std::make_shared<PositionStat>())

@@ -7,50 +7,46 @@
 namespace samsar {
     namespace simulation {
 
-        FishSimulation::FishSimulation(bool stats_enable) : Simulation(stats_enable)
-        {
-            _sim_settings.add_setting("num_fish", 6)
-                .add_setting("num_robot", 0)
-                .add_setting("num_cells", 40)
-                .add_setting("sim_time", 5400);
-            // _sim_settings.add_setting("deg_vision", 120); // not used anymore
-            _init();
-        }
+        FishSimulation::FishSimulation(bool stats_enable) : Simulation(stats_enable) { _init(); }
 
-        FishSimulation::FishSimulation(const Settings& settings)
-            : Simulation(settings.get_field<bool>("stats_enabled")->value())
+        FishSimulation::FishSimulation(const FishSimSettings& settings)
+            : Simulation(settings.stats_enabled)
         {
-            _sim_settings = settings;
+            _fish_sim_settings = settings;
             _init();
         }
 
         FishSimulation::FishSimulation(
-            const Settings& settings, const std::vector<FishIndividualPtr>& fish)
-            : Simulation(settings.get_field<bool>("stats_enabled")->value()), _fish(fish)
+            const FishSimSettings& settings, const std::vector<FishIndividualPtr>& fish)
+            : Simulation(settings.stats_enabled), _fish(fish)
         {
-            size_t count = 0;
+            int count = 0;
             for (const auto& f : _fish)
                 if (f->is_robot())
                     ++count;
-            _sim_settings = settings;
-            _sim_settings.add_setting("num_agents", _fish.size() + count);
-            _sim_settings.add_setting("num_robot", count);
-            _sim_settings.add_setting("num_fish", _fish.size() - count);
+            _fish_sim_settings = settings;
+            _fish_sim_settings.num_agents = _fish.size() + count;
+            _fish_sim_settings.num_robot = count;
+            _fish_sim_settings.num_fish = _fish.size() - count;
+
+            _sim_settings.sim_time = _fish_sim_settings.sim_time;
+            _sim_settings.stats_enabled = _fish_sim_settings.stats_enabled;
         }
 
         void FishSimulation::_init()
         {
-            int num_agents = _sim_settings.get_field<int>("num_fish")->value()
-                + _sim_settings.get_field<int>("num_robot")->value();
-            _sim_settings.add_setting("num_agents", num_agents);
+            _sim_settings.sim_time = _fish_sim_settings.sim_time;
+            _sim_settings.stats_enabled = _fish_sim_settings.stats_enabled;
+
+            int num_agents = _fish_sim_settings.num_fish + _fish_sim_settings.num_robot;
+            _fish_sim_settings.num_agents = num_agents;
 
             _fish.resize(static_cast<size_t>(num_agents));
             for (size_t i = 0; i < _fish.size(); ++i) {
                 _fish[i] = std::make_shared<FishIndividual>();
                 _fish[i]->id() = static_cast<int>(i);
             }
-            for (size_t i = 0;
-                 i < static_cast<size_t>(_sim_settings.get_field<int>("num_robot")->value()); ++i)
+            for (size_t i = 0; i < static_cast<size_t>(_fish_sim_settings.num_robot); ++i)
                 _fish[i]->is_robot() = true;
         }
 
@@ -80,6 +76,9 @@ namespace samsar {
 
         std::vector<FishIndividualPtr> FishSimulation::fish() const { return _fish; }
         std::vector<FishIndividualPtr>& FishSimulation::fish() { return _fish; }
+
+        FishSimSettings FishSimulation::fish_sim_settings() const { return _fish_sim_settings; }
+        FishSimSettings& FishSimulation::fish_sim_settings() { return _fish_sim_settings; }
 
     } // namespace simulation
 } // namespace samsar

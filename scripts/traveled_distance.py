@@ -13,8 +13,8 @@ sns.set_style("darkgrid")
 
 class PolarityWriter:
     def __init__(self):
-        self.__ofile = open('sum_headings.dat', 'w')
-        self.__ofile.write('#iteration polarity\n')
+        self.__ofile = open('traveled_distances.dat', 'w')
+        self.__ofile.write('#iteration fish1_traveled_dist fish2_traveled_dist ... sum_polarity\n')
 
     def write(self, line):
         oline = str(line)
@@ -53,8 +53,13 @@ def plot_hist(args, sum_heading):
 def calculate_sum_heading(args, data):
     positions = data[:, 1:]
     num_cells = args.num_cells
-    sum_heading = np.int32(np.zeros([np.shape(positions)[0], 2]))
-    sum_heading[0, 1] = np.sign(np.sum(positions[1] - positions[0]))
+    
+
+    cols = np.shape(positions)[1] + 1
+    if not args.no_sum:
+        cols += 1
+    sum_heading = np.int32(np.zeros([np.shape(positions)[0], cols]))
+    sum_heading[0, 1:-1] = np.sum(positions[1] - positions[0])
 
     if not args.only_plot:
         pw = PolarityWriter()
@@ -66,7 +71,18 @@ def calculate_sum_heading(args, data):
         for j in range(np.shape(positions)[1]):
             if dist[j] <= - (num_cells / 2) or dist[j] > num_cells / 2:
                 dist[j] = np.sign(dist[j]) * (num_cells - np.abs(dist[j]))
-        sum_heading[i, 1] = np.sum(dist)
+            dist[j] = dist[j]
+            
+            if dist[j] == 0:
+                dist[j] = dist[j-1]
+
+      
+        if not args.no_sum:
+            sum_heading[i, 1:-1] = dist
+            sum_heading[i, -1] = np.sum(dist)
+        else:
+            sum_heading[i, 1:] = dist
+
 
         if not args.only_plot:
             pw.write(sum_heading[i])
@@ -100,6 +116,9 @@ if __name__ == '__main__':
     parser.add_argument('--compare',
                         action='store_true',
                         help='compare two distributions')
+    parser.add_argument('--no-sum',
+                        action='store_true',
+                        help='do not write sum of headings in file')
     parser.add_argument('--against',
                         type=str,
                         help='file to compare against')

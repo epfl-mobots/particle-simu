@@ -1,13 +1,16 @@
 #ifndef SIMULATION_BASE_HPP
 #define SIMULATION_BASE_HPP
 
-#include <settings/settings.hpp>
 #include <stat/stat_base.hpp>
 #include <vector>
 
 namespace samsar {
-
     namespace simulation {
+
+        struct Settings {
+            uint64_t sim_time = 1000;
+            bool stats_enabled = true;
+        };
 
         class Simulation {
         public:

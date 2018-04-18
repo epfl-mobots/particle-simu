@@ -30,11 +30,7 @@ namespace samsar {
             bool is_robot() const { return _is_robot; }
             bool& is_robot() { return _is_robot; }
 
-            Settings& individual_settings() { return _individual_settings; }
-            Settings individual_settings() const { return _individual_settings; }
-
         protected:
-            Settings _individual_settings;
             Position<PositionType> _position;
             Speed<SpeedType> _speed;
 

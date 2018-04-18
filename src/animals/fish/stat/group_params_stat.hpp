@@ -23,26 +23,11 @@ namespace samsar {
                 if (fsim->iteration() == 0) {
                     *_log_file << "-- Group params --" << std::endl;
                     *_log_file << "Group threshold: "
-                               << fsim->fish()
-                                      .at(0)
-                                      ->individual_settings()
-                                      .get_field<size_t>("group_threshold")
-                                      ->value()
-                               << std::endl;
+                               << fsim->fish().at(0)->fish_params().group_threshold << std::endl;
                     *_log_file << "Group cells forward: "
-                               << fsim->fish()
-                                      .at(0)
-                                      ->individual_settings()
-                                      .get_field<size_t>("cells_forward")
-                                      ->value()
-                               << std::endl;
+                               << fsim->fish().at(0)->fish_params().cells_forward << std::endl;
                     *_log_file << "Group cells backward: "
-                               << fsim->fish()
-                                      .at(0)
-                                      ->individual_settings()
-                                      .get_field<size_t>("cells_backward")
-                                      ->value()
-                               << std::endl;
+                               << fsim->fish().at(0)->fish_params().cells_backward << std::endl;
                 }
             }
         };

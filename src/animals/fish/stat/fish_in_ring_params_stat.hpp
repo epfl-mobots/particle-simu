@@ -23,23 +23,14 @@ namespace samsar {
 
                 if (fsim->iteration() == 0) {
                     *_log_file << "-- Simulation params --" << std::endl;
-                    *_log_file << "Simulation time: "
-                               << fsim->sim_settings().get_field<size_t>("sim_time")->value()
+                    *_log_file << "Simulation time: " << fsim->fish_sim_settings().sim_time
                                << std::endl;
-                    *_log_file << "Number of fish: "
-                               << fsim->sim_settings().get_field<size_t>("num_fish")->value()
+                    *_log_file << "Number of fish: " << fsim->fish_sim_settings().num_fish
                                << std::endl;
-                    *_log_file << "Number of robots: "
-                               << fsim->sim_settings().get_field<size_t>("num_robot")->value()
+                    *_log_file << "Number of robots: " << fsim->fish_sim_settings().num_robot
                                << std::endl;
-                    *_log_file << "Number of cells: "
-                               << fsim->sim_settings().get_field<size_t>("num_cells")->value()
+                    *_log_file << "Number of cells: " << fsim->fish_sim_settings().num_cells
                                << std::endl;
-                    *_log_file << "Group dump start: 0" << std::endl;
-                    //                    *_log_file << "Degrees of vision: "
-                    //                               <<
-                    //                               fsim->sim_settings().get_field<size_t>("deg_vision")->value()
-                    //                               << std::endl;
                 }
             }
         };

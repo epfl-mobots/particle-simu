@@ -23,8 +23,8 @@ def plot_polarities(polarities, args):
                 print(colored('Skipping directory creation (already exists)', 'yellow'))
 
     plt.figure(figsize=[8, 6], dpi=args.dpi)
-    plt.plot(polarities[:, 1], '.-')
-    plt.ylim([0, 1])
+    plt.plot(polarities[:, 1:], '.--')
+    plt.ylim([-2, 2])
     plt.xlabel('Time')
     plt.ylabel('Proportion Clockwise')
     if not args.hide_plot:

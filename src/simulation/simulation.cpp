@@ -6,8 +6,7 @@ namespace samsar {
 
         Simulation::Simulation(bool stats_enabled)
         {
-            // loading default settings
-            _sim_settings.add_setting("sim_time", 1000).add_setting("stats_enabled", stats_enabled);
+            _sim_settings.stats_enabled = stats_enabled;
             _init();
         }
 
@@ -47,22 +46,13 @@ namespace samsar {
 
         const std::string& Simulation::res_dir() const { return _res_dir; }
 
-        uint64_t Simulation::sim_time() const
-        {
-            return _sim_settings.get_field<int>("sim_time")->value();
-        }
+        uint64_t Simulation::sim_time() const { return _sim_settings.sim_time; }
 
         uint64_t Simulation::iteration() const { return _iteration; }
 
-        bool Simulation::stats_enabled() const
-        {
-            return _sim_settings.get_field<bool>("stats_enabled")->value();
-        }
+        bool Simulation::stats_enabled() const { return _sim_settings.stats_enabled; }
 
-        bool& Simulation::stats_enabled()
-        {
-            return _sim_settings.get_field<bool>("stats_enabled")->value();
-        }
+        bool& Simulation::stats_enabled() { return _sim_settings.stats_enabled; }
 
         Simulation& Simulation::add_stat(const stat::StatBasePtr stat)
         {

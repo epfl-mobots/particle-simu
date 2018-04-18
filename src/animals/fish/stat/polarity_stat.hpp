@@ -26,7 +26,7 @@ namespace samsar {
                 if (fsim->iteration() == 0)
                     *_log_file << "#iteration polarity" << std::endl;
 
-                int num_agents = fsim->sim_settings().get_field<int>("num_agents")->value();
+                int num_agents = fsim->fish_sim_settings().num_agents;
                 float sum_heading = 0.0f;
                 const auto& fish = fsim->fish();
                 for (const auto& f : fish)
