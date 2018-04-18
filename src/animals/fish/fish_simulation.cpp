@@ -70,6 +70,7 @@ namespace samsar {
 
             // update statistics
             _update_stats(std::make_shared<FishSimulation>(*this));
+            _update_descriptors(std::make_shared<FishSimulation>(*this));
 
             Simulation::spin_once();
         }

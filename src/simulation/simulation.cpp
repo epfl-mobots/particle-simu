@@ -44,6 +44,12 @@ namespace samsar {
                 (*stat)(sim);
         }
 
+        void Simulation::_update_descriptors(std::shared_ptr<Simulation> sim) const
+        {
+            for (const auto& desc : _descriptors)
+                (*desc)(sim);
+        }
+
         const std::string& Simulation::res_dir() const { return _res_dir; }
 
         uint64_t Simulation::sim_time() const { return _sim_settings.sim_time; }
@@ -57,6 +63,12 @@ namespace samsar {
         Simulation& Simulation::add_stat(const stat::StatBasePtr stat)
         {
             _stats.push_back(stat);
+            return *this;
+        }
+
+        Simulation& Simulation::add_desc(const desc::DescriptorBasePtr desc)
+        {
+            _descriptors.push_back(desc);
             return *this;
         }
 

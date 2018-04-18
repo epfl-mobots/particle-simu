@@ -2,6 +2,8 @@
 #include <animals/fish/fish_simulation.hpp>
 #include <tools/timer.hpp>
 
+#include <animals/fish/descriptors/cohesion_contribution_desc.hpp>
+#include <animals/fish/descriptors/cohesion_desc.hpp>
 #include <animals/fish/stat/fish_in_ring_params_stat.hpp>
 #include <animals/fish/stat/group_params_stat.hpp>
 #include <animals/fish/stat/group_stat.hpp>
@@ -22,6 +24,7 @@ int main()
     using namespace samsar;
     using namespace simulation;
     using namespace stat;
+    using namespace desc;
 
     int num_cells = 40;
     int num_robot = 1;
@@ -41,7 +44,7 @@ int main()
     fish.push_back(agent);
 
     FishParams params;
-#define TESTING
+//#define TESTING
 #ifndef TESTING
     params.prob_obey = 1.0f;
     params.prob_move = 0.901f;
@@ -53,7 +56,7 @@ int main()
     params.heading_change_duration = 2;
 #else
     Eigen::VectorXd x(9);
-    x << 1, 1, 1, 1.8894e-15, 1.74205e-16, 2.29153e-14, 1, 1.25456e-15, 3.25135e-14;
+    x << 1, 1, 2.12538e-15, 6.56024e-14, 0.442327, 1, 0.368293, 1, 0.44209;
     params.prob_obey = x(0);
     params.prob_move = x(1);
     params.group_threshold = to_discrete(x(2), 6, 2);
@@ -91,6 +94,9 @@ int main()
         .add_stat(std::make_shared<GroupStat>())
         .add_stat(std::make_shared<GroupParamsStat>())
         .add_stat(std::make_shared<FishInRingParamsStat>());
+
+    sim.add_desc(std::make_shared<CohesionDesc>())
+        .add_desc(std::make_shared<CohesionContributionDesc>(0));
 
     tools::Timer t;
     t.start();
