@@ -4,6 +4,7 @@
 
 #include <animals/fish/descriptors/cohesion_contribution_desc.hpp>
 #include <animals/fish/descriptors/cohesion_desc.hpp>
+#include <animals/fish/descriptors/traveled_distance_desc.hpp>
 #include <animals/fish/stat/fish_in_ring_params_stat.hpp>
 #include <animals/fish/stat/group_params_stat.hpp>
 #include <animals/fish/stat/group_stat.hpp>
@@ -54,9 +55,12 @@ int main()
     params.sum_weight = {0.3f, -2.0f};
     params.influence_alpha = 4;
     params.heading_change_duration = 2;
+
+    params.heading_bias = Heading::COUNTER_CLOCKWISE;
+
 #else
     Eigen::VectorXd x(9);
-    x << 1, 1, 2.12538e-15, 6.56024e-14, 0.442327, 1, 0.368293, 1, 0.44209;
+    x << 1, 1, 8.09008e-16, 2.31794e-14, 6.17041e-15, 5.39061e-16, 2.82766e-14, 1, 0.446131;
     params.prob_obey = x(0);
     params.prob_move = x(1);
     params.group_threshold = to_discrete(x(2), 6, 2);
@@ -96,7 +100,8 @@ int main()
         .add_stat(std::make_shared<FishInRingParamsStat>());
 
     sim.add_desc(std::make_shared<CohesionDesc>())
-        .add_desc(std::make_shared<CohesionContributionDesc>(0));
+        .add_desc(std::make_shared<CohesionContributionDesc>(0))
+        .add_desc(std::make_shared<TraveledDistanceDesc>());
 
     tools::Timer t;
     t.start();

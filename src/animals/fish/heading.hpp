@@ -3,6 +3,8 @@
 
 #include <tools/random/random_generator.hpp>
 
+#include <boost/algorithm/string.hpp>
+
 #include <cmath>
 #include <cstdint>
 #include <map>
@@ -22,6 +24,8 @@ namespace samsar {
             else
                 return Heading::CLOCKWISE;
         }
+
+        Heading to_heading(const std::string& hdg);
 
         std::string to_str(Heading heading);
         Heading reverse_heading(Heading hdg);

@@ -26,6 +26,16 @@ namespace samsar {
                 return false;
         }
 
+        Heading to_heading(const std::string& hdg)
+        {
+            if (boost::algorithm::to_lower_copy(hdg) == "clockwise")
+                return Heading::CLOCKWISE;
+            else if (boost::algorithm::to_lower_copy(hdg) == "counter_clockwise")
+                return Heading::COUNTER_CLOCKWISE;
+            else
+                return Heading::UNDEFINED;
+        }
+
         Heading random_heading() { return to_heading(tools::random_sgn()); }
 
     } // namespace types

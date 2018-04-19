@@ -100,8 +100,12 @@ namespace samsar {
                         std::make_shared<WeightFunc>(_fish_params.sum_weight)));
 
                 if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey) {
-                    _next_heading = reverse_heading(
-                        fg.sum_heading(std::static_pointer_cast<FishSimulation>(sim)->fish()));
+                    if (_fish_params.heading_bias == Heading::UNDEFINED) {
+                        _next_heading = reverse_heading(
+                            fg.sum_heading(std::static_pointer_cast<FishSimulation>(sim)->fish()));
+                    }
+                    else
+                        _next_heading = _fish_params.heading_bias;
                     _heading_change = true;
                 }
 
@@ -110,9 +114,15 @@ namespace samsar {
                     std::round(fg.average_speed(sim, std::make_shared<FishIndividual>(*this)))));
             }
             else {
-                _next_heading = _heading;
-                if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey) {
-                    _next_heading = reverse_heading(_heading);
+                if (_fish_params.heading_bias == Heading::UNDEFINED) {
+                    _next_heading = _heading;
+                    if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey) {
+                        _next_heading = reverse_heading(_heading);
+                        _heading_change = true;
+                    }
+                }
+                else {
+                    _next_heading = _fish_params.heading_bias;
                     _heading_change = true;
                 }
             }
@@ -123,8 +133,12 @@ namespace samsar {
                     = tools::random_in_range(_fish_params.min_speed, _fish_params.max_speed);
             }
 
-            if (_next_heading == Heading::UNDEFINED)
-                _next_heading = to_heading(random_heading());
+            if (_next_heading == Heading::UNDEFINED) {
+                if (_fish_params.heading_bias == Heading::UNDEFINED)
+                    _next_heading = to_heading(random_heading());
+                else
+                    _next_heading = _fish_params.heading_bias;
+            }
         }
 
         void FishIndividual::move(const std::shared_ptr<Simulation> sim)

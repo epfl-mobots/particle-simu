@@ -20,6 +20,7 @@ namespace samsar {
             std::vector<float> sum_weight = {0.3f, -2.0f};
             int heading_change_duration = 2;
             int influence_alpha = 4;
+            Heading heading_bias = Heading::UNDEFINED;
         };
 
         class FishIndividual : public Individual<int, int> {
