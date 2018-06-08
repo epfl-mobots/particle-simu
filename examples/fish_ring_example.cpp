@@ -32,7 +32,7 @@ int main()
     int num_fish = 5;
 
     FishSimSettings set;
-    set.sim_time = 5400;
+    set.sim_time = 5500;
     set.stats_enabled = true;
     set.num_fish = num_fish;
     set.num_robot = num_robot;
@@ -51,7 +51,7 @@ int main()
     params.prob_move = 0.901f;
     params.group_threshold = 3;
     params.cells_forward = 5;
-    params.cells_backward = 5;
+    params.cells_backward = 8;
     params.sum_weight = {0.3f, -2.0f};
     params.influence_alpha = 4;
     params.heading_change_duration = 2;
