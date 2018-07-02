@@ -9,9 +9,9 @@ namespace samsar {
         using namespace types;
 
         struct FishParams {
-            float prob_obey = 1.0f;
+            float prob_obey = 0.94f;
             float prob_move = 0.901f;
-            float prob_change_speed = 0.1f;
+            float prob_change_speed = 0.0f;
             int group_threshold = 3;
             int cells_forward = 5;
             int cells_backward = 5;

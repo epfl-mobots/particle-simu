@@ -123,7 +123,6 @@ namespace samsar {
                 }
                 else {
                     _next_heading = _fish_params.heading_bias;
-                    _heading_change = true;
                 }
             }
 

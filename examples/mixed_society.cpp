@@ -2,6 +2,9 @@
 #include <animals/fish_replay/fishreplay.hpp>
 #include <tools/timer.hpp>
 
+#include <animals/fish/descriptors/cohesion_contribution_desc.hpp>
+#include <animals/fish/descriptors/cohesion_desc.hpp>
+#include <animals/fish/descriptors/traveled_distance_desc.hpp>
 #include <animals/fish/stat/fish_in_ring_params_stat.hpp>
 #include <animals/fish/stat/group_params_stat.hpp>
 #include <animals/fish/stat/group_stat.hpp>
@@ -59,6 +62,7 @@ int main(int argc, char** argv)
     using namespace samsar;
     using namespace simulation;
     using namespace stat;
+    using namespace desc;
 
     Vec2di positions = read_positions(argv[1]);
 
@@ -79,6 +83,7 @@ int main(int argc, char** argv)
     FishIndividualPtr agent = std::make_shared<FishIndividual>();
     agent->is_robot() = true;
     agent->position().x = positions[0][0];
+
 //#define TESTING
 #ifdef TESTING
     FishParams params;
@@ -120,11 +125,19 @@ int main(int argc, char** argv)
         .add_stat(std::make_shared<GroupParamsStat>())
         .add_stat(std::make_shared<FishInRingParamsStat>());
 
+    sim.add_desc(std::make_shared<CohesionDesc>())
+        .add_desc(std::make_shared<CohesionContributionDesc>(0))
+        .add_desc(std::make_shared<TraveledDistanceDesc>());
+
     tools::Timer t;
     t.start();
     sim.spin();
     double elapsed_time = t.stop();
     std::cout << "Simulation ended after " << elapsed_time << "ms" << std::endl;
+
+    auto coh = sim.descriptors()[0]->get();
+    std::cout << "Cohesion: " << std::accumulate(coh.begin(), coh.end(), 0.0) / coh.size()
+              << std::endl;
 
     return 0;
 }
