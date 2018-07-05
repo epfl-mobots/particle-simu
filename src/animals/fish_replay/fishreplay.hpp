@@ -14,10 +14,20 @@ namespace samsar {
 
             virtual void stimulate(const std::shared_ptr<simulation::Simulation>) override;
             virtual void move(const std::shared_ptr<simulation::Simulation>) override;
+            virtual void force_init() override;
+
+            const std::vector<bool>& predicted_hdg() const { return _predicted_hdg; }
+            const std::vector<bool>& predicted_move() const { return _predicted_move; }
 
         private:
             std::vector<int> _trajectory;
+            std::vector<bool> _predicted_hdg;
+            std::vector<bool> _predicted_move;
+
+            void _init();
         };
+
+        using FishReplayPtr = std::shared_ptr<FishReplay>;
 
     } // namespace actual
 } // namespace samsar

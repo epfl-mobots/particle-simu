@@ -4,6 +4,7 @@
 
 #include <animals/fish/descriptors/cohesion_contribution_desc.hpp>
 #include <animals/fish/descriptors/cohesion_desc.hpp>
+#include <animals/fish/descriptors/radial_interindividual_desc.hpp>
 #include <animals/fish/descriptors/traveled_distance_desc.hpp>
 #include <animals/fish/stat/fish_in_ring_params_stat.hpp>
 #include <animals/fish/stat/group_params_stat.hpp>
@@ -32,7 +33,7 @@ int main()
     int num_fish = 5;
 
     FishSimSettings set;
-    set.sim_time = 7440;
+    set.sim_time = 7000;
     set.stats_enabled = true;
     set.num_fish = num_fish;
     set.num_robot = num_robot;
@@ -42,6 +43,8 @@ int main()
     for (int i = 0; i < num_fish + num_robot; ++i) {
         FishIndividualPtr def_agent = std::make_shared<FishIndividual>();
         def_agent->id() = i;
+        if (i < num_robot)
+            def_agent->is_robot() = true;
         fish.push_back(def_agent);
     }
 
@@ -56,7 +59,8 @@ int main()
 
     sim.add_desc(std::make_shared<CohesionDesc>())
         .add_desc(std::make_shared<CohesionContributionDesc>(0))
-        .add_desc(std::make_shared<TraveledDistanceDesc>());
+        .add_desc(std::make_shared<TraveledDistanceDesc>())
+        .add_desc(std::make_shared<RadialInterindividualDesc>());
 
     tools::Timer t;
     t.start();
@@ -67,6 +71,9 @@ int main()
     auto coh = sim.descriptors()[0]->get();
     std::cout << "Cohesion: " << std::accumulate(coh.begin(), coh.end(), 0.0) / coh.size()
               << std::endl;
+    auto dist = sim.descriptors()[3]->get();
+    std::cout << "Average distance to centroid: "
+              << std::accumulate(dist.begin(), dist.end(), 0.0) / dist.size() << std::endl;
 
     return 0;
 }

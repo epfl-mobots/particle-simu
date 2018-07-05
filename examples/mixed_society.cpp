@@ -4,6 +4,7 @@
 
 #include <animals/fish/descriptors/cohesion_contribution_desc.hpp>
 #include <animals/fish/descriptors/cohesion_desc.hpp>
+#include <animals/fish/descriptors/radial_interindividual_desc.hpp>
 #include <animals/fish/descriptors/traveled_distance_desc.hpp>
 #include <animals/fish/stat/fish_in_ring_params_stat.hpp>
 #include <animals/fish/stat/group_params_stat.hpp>
@@ -67,8 +68,10 @@ int main(int argc, char** argv)
     Vec2di positions = read_positions(argv[1]);
 
     int num_cells = 40;
-    int num_robot = 1;
-    int num_fish = static_cast<int>(positions.size()) - 1;
+    //    int num_robot = 1;
+    //    int num_fish = static_cast<int>(positions.size()) - 1;
+    int num_robot = 0;
+    int num_fish = static_cast<int>(positions.size());
     uint64_t sim_time = positions[0].size();
 
     FishSimSettings set;
@@ -79,25 +82,46 @@ int main(int argc, char** argv)
     set.num_cells = num_cells;
 
     std::vector<FishIndividualPtr> fish;
-
     FishIndividualPtr agent = std::make_shared<FishIndividual>();
     agent->is_robot() = true;
+    agent->id() = 0;
     agent->position().x = positions[0][0];
 
 //#define TESTING
 #ifdef TESTING
+    // num_cells: 159
+    // prob_obey: 1
+    // prob_move: 1
+    // prob_change_speed: 0
+    // group_threshold: 3
+    // cells_forward: 23
+    // cells_backward: 23
+    // min_speed: 1
+    // max_speed: 1
+    // sum_weight: 1 -1
+    // heading_change_duration: 53
+    // influence_alpha: 1
+    // heading_bias: 0
+    // Average radial distance values: 0.882757 0.861899 0.869066 0.875058 0.872716 0.875833
+    // 0.905551 0.881545 0.913723 0.861875 (38.1593) Average hdg perc values: 0.966383 0.970332
+    // 0.96109 0.970302 0.960264 0.967174 0.962488 0.966522 0.962263 0.967551
+    //>>> Fitness: 0.880002 0.965437
+
+    set.num_cells = 159;
     FishParams params;
-    Eigen::VectorXd x(9);
-    x << 1, 1, 1, 4.09828e-15, 1, 1, 6.4759e-16, 1, 1;
-    params.prob_obey = x(0);
-    params.prob_move = x(1);
-    params.group_threshold = to_discrete(x(2), 6, 2);
-    params.cells_forward = to_discrete(x(3), 8, 1);
-    params.cells_backward = to_discrete(x(4), 8, 1);
-    params.sum_weight
-        = {(static_cast<float>(x(5)) - 0.5f) * 6, (static_cast<float>(x(6)) - 0.5f) * 6};
-    params.influence_alpha = to_discrete(x(7), 8);
-    params.heading_change_duration = to_discrete(x(8), num_cells / 3);
+    //    Eigen::VectorXd x(9);
+    //    x << 1, 1, 1, 4.09828e-15, 1, 1, 6.4759e-16, 1, 1;
+    params.prob_obey = 1.0f;
+    params.prob_move = 1.0f;
+    params.prob_change_speed = 0;
+    params.group_threshold = 3;
+    params.cells_forward = 23;
+    params.cells_backward = 23;
+    params.sum_weight = {1, -1};
+    params.heading_change_duration = 53;
+    params.influence_alpha = 1;
+    params.min_speed = 1;
+    params.max_speed = 1;
 
     std::cout << "Current params for the robot: " << std::endl
               << "prob_obey: " << params.prob_obey << std::endl
@@ -111,10 +135,17 @@ int main(int argc, char** argv)
     agent->fish_params() = params;
     agent->force_init();
 #endif
-    fish.push_back(agent);
+    //    fish.push_back(agent);
 
-    for (size_t i = 0; i < positions.size() - 1; ++i)
-        fish.push_back(std::make_shared<actual::FishReplay>(positions[i]));
+    for (int i = num_robot; i < num_fish; ++i) {
+        auto agent = std::make_shared<actual::FishReplay>(positions[i]);
+#ifdef TESTING
+        agent->fish_params() = params;
+        agent->force_init();
+#endif
+        agent->id() = i + num_robot;
+        fish.push_back(agent);
+    }
 
     FishSimulation sim(set, fish);
     sim.add_stat(std::make_shared<PositionStat>())
@@ -127,7 +158,8 @@ int main(int argc, char** argv)
 
     sim.add_desc(std::make_shared<CohesionDesc>())
         .add_desc(std::make_shared<CohesionContributionDesc>(0))
-        .add_desc(std::make_shared<TraveledDistanceDesc>());
+        .add_desc(std::make_shared<TraveledDistanceDesc>())
+        .add_desc(std::make_shared<RadialInterindividualDesc>());
 
     tools::Timer t;
     t.start();
@@ -138,6 +170,32 @@ int main(int argc, char** argv)
     auto coh = sim.descriptors()[0]->get();
     std::cout << "Cohesion: " << std::accumulate(coh.begin(), coh.end(), 0.0) / coh.size()
               << std::endl;
+    auto dist = sim.descriptors()[3]->get();
+    std::cout << "Average distance to centroid: "
+              << std::accumulate(dist.begin(), dist.end(), 0.0) / dist.size() << std::endl;
+
+    std::vector<float> hdgs;
+    std::vector<float> moves;
+    for (size_t i = num_robot; i < sim.fish().size(); ++i) { // skip artificial fish
+        float hdg_success = 0;
+        float pos_success = 0;
+        auto focal_fish = reinterpret_cast<actual::FishReplay*>(sim.fish()[i].get());
+
+        std::for_each(focal_fish->predicted_hdg().begin(), focal_fish->predicted_hdg().end(),
+            [&hdg_success](bool s) { hdg_success += s; });
+        hdg_success /= focal_fish->predicted_hdg().size();
+        hdgs.push_back(hdg_success);
+
+        std::for_each(focal_fish->predicted_move().begin(), focal_fish->predicted_move().end(),
+            [&pos_success](bool s) { pos_success += s; });
+        pos_success /= focal_fish->predicted_move().size();
+        moves.push_back(pos_success);
+    }
+
+    std::for_each(hdgs.begin(), hdgs.end(), [](float perc) { std::cout << perc << " "; });
+    std::cout << std::endl;
+    std::for_each(moves.begin(), moves.end(), [](float perc) { std::cout << perc << " "; });
+    std::cout << std::endl;
 
     return 0;
 }

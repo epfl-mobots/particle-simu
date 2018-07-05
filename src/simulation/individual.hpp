@@ -13,6 +13,8 @@ namespace samsar {
 
         template <typename PositionType = float, typename SpeedType = float> class Individual {
         public:
+            using position_type_t = PositionType;
+
             Individual() : _is_robot(false) {}
 
             virtual void stimulate(const std::shared_ptr<Simulation>) = 0;

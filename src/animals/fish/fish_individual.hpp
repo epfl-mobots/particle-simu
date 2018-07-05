@@ -14,13 +14,29 @@ namespace samsar {
             float prob_change_speed = 0.0f;
             int group_threshold = 3;
             int cells_forward = 5;
-            int cells_backward = 5;
+            int cells_backward = 8;
             int min_speed = 1;
             int max_speed = 1;
-            std::vector<float> sum_weight = {0.3f, -2.0f};
-            int heading_change_duration = 2;
+            std::vector<float> sum_weight = {0.3f, -0.6f};
+            int heading_change_duration = 3;
             int influence_alpha = 4;
             Heading heading_bias = Heading::UNDEFINED;
+
+            void print() const
+            {
+                std::cout << "prob_obey: " << prob_obey << std::endl;
+                std::cout << "prob_move: " << prob_move << std::endl;
+                std::cout << "prob_change_speed: " << prob_change_speed << std::endl;
+                std::cout << "group_threshold: " << group_threshold << std::endl;
+                std::cout << "cells_forward: " << cells_forward << std::endl;
+                std::cout << "cells_backward: " << cells_backward << std::endl;
+                std::cout << "min_speed: " << min_speed << std::endl;
+                std::cout << "max_speed: " << max_speed << std::endl;
+                std::cout << "sum_weight: " << sum_weight[0] << " " << sum_weight[1] << std::endl;
+                std::cout << "heading_change_duration: " << heading_change_duration << std::endl;
+                std::cout << "influence_alpha: " << influence_alpha << std::endl;
+                std::cout << "heading_bias: " << heading_bias << std::endl;
+            }
         };
 
         class FishIndividual : public Individual<int, int> {
@@ -38,7 +54,7 @@ namespace samsar {
             Heading& next_heading();
             size_t group_size() const;
 
-            void force_init();
+            virtual void force_init();
 
             FishParams& fish_params();
             FishParams fish_params() const;

@@ -11,12 +11,23 @@ namespace samsar {
         FishReplay::FishReplay(const std::vector<int>& trajectory)
             : FishIndividual(), _trajectory(trajectory)
         {
+            _init();
+        }
+
+        FishReplay::~FishReplay() {}
+
+        void FishReplay::_init()
+        {
             _position.x = _trajectory[0]; // initialize position
             _next_heading = Heading::UNDEFINED;
             _heading = Heading::UNDEFINED;
         }
 
-        FishReplay::~FishReplay() {}
+        void FishReplay::force_init()
+        {
+            FishIndividual::force_init();
+            _init();
+        }
 
         void FishReplay::stimulate(const std::shared_ptr<simulation::Simulation> sim)
         {
@@ -25,24 +36,36 @@ namespace samsar {
             int num_cells = fsim->fish_sim_settings().num_cells;
 
             if (sim->iteration() < _trajectory.size() - 1) {
-                int diff = _trajectory[sim->iteration() + 1] - _trajectory[sim->iteration()];
-                _next_heading = to_heading(diff);
-                if ((diff <= -(num_cells / 2)) || (diff > num_cells / 2))
+                int dist = _trajectory[sim->iteration() + 1] - _trajectory[sim->iteration()];
+                _next_heading = to_heading(dist);
+                if (std::abs(dist) > static_cast<int>(num_cells / 2)) {
+                    dist = std::abs(static_cast<int>(num_cells) - dist);
                     _next_heading = reverse_heading(_next_heading);
+                }
             }
 
             if (sim->iteration() > 0)
                 _speed.set_speed_bounded(
                     std::abs(_trajectory[sim->iteration()] - _trajectory[sim->iteration() - 1]));
-
-            if (_next_heading == Heading::UNDEFINED)
-                _next_heading = random_heading();
         }
 
         void FishReplay::move(const std::shared_ptr<simulation::Simulation> sim)
         {
-            _heading = _next_heading;
-            _position.x = _trajectory[sim->iteration()];
+            Heading save_heading = _next_heading;
+            int save_pos = _trajectory[sim->iteration()];
+
+            _heading = save_heading;
+            if (_heading == Heading::UNDEFINED)
+                _heading = random_heading();
+
+            FishIndividual::stimulate(sim);
+            FishIndividual::move(sim);
+
+            _predicted_hdg.push_back(_heading == save_heading);
+            _predicted_move.push_back(_position.x == save_pos);
+
+            _heading = save_heading;
+            _position.x = save_pos;
         }
 
     } // namespace actual

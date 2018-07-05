@@ -16,7 +16,7 @@ namespace samsar {
             }
 
             float operator()(const std::shared_ptr<Simulation> sim, const FishIndividualPtr& ff,
-                const FishIndividualPtr& f) const override
+                             const FishIndividualPtr& f) const override
             {
                 auto fsim = std::static_pointer_cast<FishSimulation>(sim);
                 int num_cells = fsim->fish_sim_settings().num_cells;
@@ -25,17 +25,18 @@ namespace samsar {
 
                 std::vector<int> forward;
                 boost::push_back(forward,
-                    boost::irange(ff->position().x + ff->heading() * cells_forward,
-                        ff->position().x - ff->heading(), -ff->heading()));
+                                 boost::irange(ff->position().x + ff->heading() * cells_forward,
+                                               ff->position().x - ff->heading(), -ff->heading()));
                 std::vector<int> backward;
                 boost::push_back(backward,
-                    boost::irange(ff->position().x - ff->heading(),
-                        ff->position().x + (-ff->heading() * cells_backward) - ff->heading(),
-                        -ff->heading()));
+                                 boost::irange(ff->position().x - ff->heading(),
+                                               ff->position().x + (-ff->heading() * cells_backward)
+                                                   - ff->heading(),
+                                               -ff->heading()));
                 std::for_each(forward.begin(), forward.end(),
-                    [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
+                              [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
                 std::for_each(backward.begin(), backward.end(),
-                    [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
+                              [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
 
                 const auto itf = std::find(forward.begin(), forward.end(), f->position().x);
                 if (!(forward.end() == itf)) {
@@ -72,7 +73,7 @@ namespace samsar {
             _next_heading = Heading::UNDEFINED;
             _heading = random_heading();
             _heading_change = false;
-            _heading_change_time = 0;
+            _heading_change_time = _fish_params.heading_change_duration;
             _speed.current = tools::random_in_range(_fish_params.min_speed, _fish_params.max_speed);
             _speed.max_speed = _fish_params.max_speed;
             _speed.min_speed = _fish_params.min_speed;
@@ -95,9 +96,9 @@ namespace samsar {
             // heading
             if (_my_group_idcs.size() > 0) {
                 FishGroup fg(_my_group_idcs);
-                _next_heading
-                    = to_heading(fg.weighted_heading(sim, std::make_shared<FishIndividual>(*this),
-                        std::make_shared<WeightFunc>(_fish_params.sum_weight)));
+                _next_heading = to_heading(
+                    fg.weighted_heading(sim, std::make_shared<FishIndividual>(*this),
+                                        std::make_shared<WeightFunc>(_fish_params.sum_weight)));
 
                 if (tools::random_in_range(0.0f, 1.0f) < 1 - prob_obey) {
                     if (_fish_params.heading_bias == Heading::UNDEFINED) {
@@ -170,13 +171,14 @@ namespace samsar {
 
             std::vector<int> pos;
             boost::push_back(pos,
-                boost::irange(
-                    _position.x + 1, _position.x + _heading * cells_forward + _heading, _heading));
+                             boost::irange(_position.x + 1,
+                                           _position.x + _heading * cells_forward + _heading,
+                                           _heading));
             boost::push_back(pos,
-                boost::irange(
-                    _position.x + (-_heading * cells_backward), _position.x + _heading, _heading));
-            std::for_each(
-                pos.begin(), pos.end(), [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
+                             boost::irange(_position.x + (-_heading * cells_backward),
+                                           _position.x + _heading, _heading));
+            std::for_each(pos.begin(), pos.end(),
+                          [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
 
             std::vector<size_t> candidate;
             auto ipos = InvertedFishTable()(fish);
@@ -209,10 +211,11 @@ namespace samsar {
             // a lot of fish in front of them, are less prone to disobey the group.
             std::vector<int> pos;
             boost::push_back(pos,
-                boost::irange(
-                    _position.x, _position.x + _heading * cells_forward + _heading, _heading));
-            std::for_each(
-                pos.begin(), pos.end(), [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
+                             boost::irange(_position.x,
+                                           _position.x + _heading * cells_forward + _heading,
+                                           _heading));
+            std::for_each(pos.begin(), pos.end(),
+                          [&](int& v) { (v < 0) ? v += num_cells : v %= num_cells; });
 
             int neighs = 0;
             auto ipos = InvertedFishTable()(fish);
