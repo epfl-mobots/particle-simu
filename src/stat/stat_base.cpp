@@ -2,7 +2,7 @@
 
 #include <simulation/simulation.hpp>
 
-namespace samsar {
+namespace simu {
     namespace stat {
 
         StatBase::~StatBase() {}
@@ -18,4 +18,4 @@ namespace samsar {
         }
 
     } // namespace stat
-} // namespace samsar
+} // namespace simu

@@ -24,6 +24,7 @@ def options(opt):
     opt.load('eigen')
     opt.load('boost')
 
+
 def configure(conf):
     conf.load('compiler_cxx waf_unit_test')
     conf.load('eigen')
@@ -52,9 +53,10 @@ def configure(conf):
     conf.env['CXXFLAGS'] = conf.env['CXXFLAGS'] + all_flags.split(' ')
     print(conf.env['CXXFLAGS'])
 
-    conf.env.LIB_SAMSAR = ['samsar']
-    conf.env.LIBPATH_SAMSAR = [os.path.join(os.getcwd(), 'build/samsar')]
+    conf.env.LIB_SAMSAR = ['simu']
+    conf.env.LIBPATH_SAMSAR = [os.path.join(os.getcwd(), 'build/')]
     conf.env.INCLUDES_SAMSAR = [os.path.join(os.getcwd(), 'src/')]
+
 
 def build(bld):
     srcs = []
@@ -64,20 +66,8 @@ def build(bld):
     for n in nodes:
         srcs += [n.bldpath()]
 
-    bld.stlib(features='cxx cxxstlib',
-        source=srcs,
-        cxxflags=['-O3', '-fPIC', '-rdynamic'],
-        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='samsar/samsar')
-
-    bld.program(features = 'cxx',
-        source=srcs+['examples/fish_ring_example.cpp'],
-        includes=incs,
-        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='fish_ring_example')
-
-    bld.program(features = 'cxx',
-        source=srcs+['examples/mixed_society.cpp'],
-        includes=incs,
-        uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-        target='mixed_society')
+    bld.shlib(features='cxx cxxstlib',
+              source=srcs,
+              cxxflags=['-O3', '-fPIC', '-rdynamic'],
+              uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
+              target='simu')

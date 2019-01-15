@@ -6,17 +6,22 @@
 Quick n dirty samsar detection
 """
 
-import os, glob, types
+import os
+import glob
+import types
 import subprocess
 from waflib.Configure import conf
 
 
 def options(opt):
-    opt.add_option('--samsar', type='string', help='path to samsar', dest='samsar')
+    opt.add_option('--samsar', type='string',
+                   help='path to samsar', dest='samsar')
+
 
 @conf
 def check_samsar(conf, *k, **kw):
-    includes_check = ['/usr/include/samsar', '/usr/local/include/samsar', '/usr/include', '/usr/local/include']
+    includes_check = ['/usr/include/samsar',
+                      '/usr/local/include/samsar', '/usr/include', '/usr/local/include']
     envincs = os.getenv('SAMSAR_INCLUDE_DIR')
     if envincs:
         includes_check += [envincs]
@@ -36,8 +41,9 @@ def check_samsar(conf, *k, **kw):
             conf.fatal('Not found in %s' % str(includes_check))
         conf.end_msg('Not found in %s' % str(includes_check), 'RED')
 
-    libs_check = ['/usr/lib/samsar', '/usr/local/lib/samsar', '/usr/lib', '/usr/local/lib'] + [envincs[:-len(envincs.split('/')[-1])-1]]
-    libs_check = [ l + '/build/samsar' for l in libs_check ]
+    libs_check = ['/usr/lib/samsar', '/usr/local/lib/samsar', '/usr/lib',
+                  '/usr/local/lib'] + [envincs[:-len(envincs.split('/')[-1])-1]]
+    libs_check = [l + '/build/samsar' for l in libs_check]
     conf.start_msg('Checking for SAMSAR libs')
     try:
         res = conf.find_file('libsamsar.a', libs_check)

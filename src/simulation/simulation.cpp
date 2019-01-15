@@ -1,7 +1,7 @@
 #include "simulation.hpp"
 #include <tools/tools.hpp>
 
-namespace samsar {
+namespace simu {
     namespace simulation {
 
         Simulation::Simulation(bool stats_enabled)
@@ -82,4 +82,4 @@ namespace samsar {
         }
 
     } // namespace simulation
-} // namespace samsar
+} // namespace simu

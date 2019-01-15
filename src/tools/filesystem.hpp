@@ -1,10 +1,10 @@
-#ifndef FILESYSTEM_HPP
-#define FILESYSTEM_HPP
+#ifndef SIMU_TOOLS_FILESYSTEM_HPP
+#define SIMU_TOOLS_FILESYSTEM_HPP
 
 #include <boost/date_time.hpp>
 #include <boost/filesystem.hpp>
 
-namespace samsar {
+namespace simu {
     namespace tools {
         std::string timestamp()
         {
@@ -24,6 +24,6 @@ namespace samsar {
             return folder_absolute_path;
         }
     } // namespace tools
-} // namespace samsar
+} // namespace simu
 
 #endif
