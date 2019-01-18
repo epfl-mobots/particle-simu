@@ -53,6 +53,7 @@ namespace simu {
         const std::string& Simulation::res_dir() const { return _res_dir; }
 
         uint64_t Simulation::sim_time() const { return _sim_settings.sim_time; }
+        uint64_t& Simulation::sim_time() { return _sim_settings.sim_time; }
 
         uint64_t Simulation::iteration() const { return _iteration; }
 

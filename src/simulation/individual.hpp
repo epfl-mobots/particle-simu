@@ -35,8 +35,6 @@ namespace simu {
 
         protected:
             Position<PositionType> _position;
-            Position<PositionType> _desired_position;
-
             Speed<SpeedType> _speed;
 
             int _id;

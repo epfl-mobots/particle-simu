@@ -25,6 +25,7 @@ namespace simu {
 
             const std::string& res_dir() const;
             uint64_t sim_time() const;
+            uint64_t& sim_time();
             uint64_t iteration() const;
             bool stats_enabled() const;
             bool& stats_enabled();
