@@ -15,6 +15,7 @@ namespace simu {
         class Individual {
         public:
             using position_type_t = PositionType;
+            using speed_type_t = SpeedType;
 
             Individual() : _is_robot(false) {}
 
