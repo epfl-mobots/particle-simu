@@ -66,7 +66,7 @@ def build(bld):
     for n in nodes:
         srcs += [n.bldpath()]
 
-    bld.shlib(features='cxx cxxstlib',
+    bld.stlib(features='cxx cxxstlib',
               source=srcs,
               cxxflags=['-O3', '-fPIC', '-rdynamic'],
               uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
