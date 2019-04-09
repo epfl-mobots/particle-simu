@@ -6,7 +6,7 @@
 #include <tools/random/rand_utils.hpp>
 #include <type_traits>
 
-namespace samsar {
+namespace simu {
     namespace tools {
 
         class RandomGenerator {
@@ -47,6 +47,6 @@ namespace samsar {
         int8_t random_sgn();
 
     } // namespace tools
-} // namespace samsar
+} // namespace simu
 
 #endif
