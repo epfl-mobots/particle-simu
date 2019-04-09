@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+
+def build(bld):
+    srcs = []
+    nodes = bld.path.ant_glob(['*.cpp', '**/*.cpp'])
+    for n in nodes:
+        srcs += [n]
+
+    print(srcs)
+
+    bld.program(features='cxx',
+                source=['../../src/stat/stat_base.cpp',
+                        '../../src/tools/random/random_generator.cpp',
+                        '../../src/simulation/simulation.cpp'] + srcs,
+                includes='. ../../src/',
+                uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
+                target='fish_ring_example')

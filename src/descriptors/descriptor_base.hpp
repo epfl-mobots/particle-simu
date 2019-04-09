@@ -1,10 +1,10 @@
-#ifndef DESCRIPTOR_BASE_HPP
-#define DESCRIPTOR_BASE_HPP
+#ifndef SIMU_DESCRIPTOR_BASE_HPP
+#define SIMU_DESCRIPTOR_BASE_HPP
 
 #include <memory>
 #include <vector>
 
-namespace samsar {
+namespace simu {
 
     namespace simulation {
         class Simulation;
@@ -25,6 +25,6 @@ namespace samsar {
 
         using DescriptorBasePtr = std::shared_ptr<DescriptorBase>;
     } // namespace desc
-} // namespace samsar
+} // namespace simu
 
 #endif

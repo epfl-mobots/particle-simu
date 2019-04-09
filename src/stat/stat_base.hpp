@@ -1,5 +1,5 @@
-#ifndef STAT_BASE_HPP
-#define STAT_BASE_HPP
+#ifndef SIMU_STAT_STAT_BASE_HPP
+#define SIMU_STAT_STAT_BASE_HPP
 
 #include <cassert>
 #include <fstream>
@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace samsar {
+namespace simu {
 
     namespace simulation {
         class Simulation;
@@ -31,6 +31,6 @@ namespace samsar {
 
         using StatBasePtr = std::shared_ptr<StatBase>;
     } // namespace stat
-} // namespace samsar
+} // namespace simu
 
 #endif
