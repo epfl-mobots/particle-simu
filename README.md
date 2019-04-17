@@ -24,7 +24,7 @@ One can make use of the code in the src to create custom simulation loops. To do
    
 
 # Examples
-You can find an example project for burst-and-coast simulation [here](https://github.com/epfl-mobots/burst-and-coast)
+You can find an example project for burst-and-coast simulation [here](https://github.com/epfl-mobots/burst-and-coast).
    
    
 
