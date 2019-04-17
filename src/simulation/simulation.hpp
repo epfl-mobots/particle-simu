@@ -1,16 +1,17 @@
-#ifndef SIMULATION_BASE_HPP
-#define SIMULATION_BASE_HPP
+#ifndef SIMU_SIMULATION_SIMULATION_HPP
+#define SIMU_SIMULATION_SIMULATION_HPP
 
 #include <descriptors/descriptor_base.hpp>
 #include <stat/stat_base.hpp>
 #include <vector>
 
-namespace samsar {
+namespace simu {
     namespace simulation {
 
         struct Settings {
             uint64_t sim_time = 1000;
             bool stats_enabled = true;
+            float timestep = 1.;
         };
 
         class Simulation {
@@ -24,6 +25,7 @@ namespace samsar {
 
             const std::string& res_dir() const;
             uint64_t sim_time() const;
+            uint64_t& sim_time();
             uint64_t iteration() const;
             bool stats_enabled() const;
             bool& stats_enabled();
@@ -50,6 +52,6 @@ namespace samsar {
         using SimulationPtr = std::shared_ptr<Simulation>;
         using SimulationConstPtr = std::shared_ptr<const Simulation>;
     } // namespace simulation
-} // namespace samsar
+} // namespace simu
 
 #endif

@@ -1,28 +1,19 @@
-#ifndef SPEED_HPP
-#define SPEED_HPP
+#ifndef SIMU_TYPES_SPEED_HPP
+#define SIMU_TYPES_SPEED_HPP
 
-namespace samsar {
+namespace simu {
     namespace types {
 
-        template <typename T = float> struct Speed {
-            Speed() : current(0), min_speed(0), max_speed(0) {}
+        template <typename T = float>
+        struct Speed {
+            Speed() : vx(0), vy(0), vz(0) {}
 
-            bool valid() const { return (current >= min_speed) && (current <= max_speed); }
-
-            void set_speed_bounded(T speed)
-            {
-                if (speed < min_speed)
-                    current = min_speed;
-                if (speed > max_speed)
-                    speed = max_speed;
-            }
-
-            T current;
-            T min_speed;
-            T max_speed;
+            T vx;
+            T vy;
+            T vz;
         };
 
     } // namespace types
-} // namespace samsar
+} // namespace simu
 
 #endif

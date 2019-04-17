@@ -1,5 +1,5 @@
-#ifndef INDIVIDUAL_HPP
-#define INDIVIDUAL_HPP
+#ifndef SIMU_SIMULATION_INDIVIDUAL_HPP
+#define SIMU_SIMULATION_INDIVIDUAL_HPP
 
 #include <simulation/simulation.hpp>
 #include <types/movement/position.hpp>
@@ -7,13 +7,15 @@
 
 #include <cassert>
 
-namespace samsar {
+namespace simu {
     namespace simulation {
         using namespace types;
 
-        template <typename PositionType = float, typename SpeedType = float> class Individual {
+        template <typename PositionType = float, typename SpeedType = float>
+        class Individual {
         public:
             using position_type_t = PositionType;
+            using speed_type_t = SpeedType;
 
             Individual() : _is_robot(false) {}
 
@@ -41,6 +43,6 @@ namespace samsar {
         };
 
     } // namespace simulation
-} // namespace samsar
+} // namespace simu
 
 #endif

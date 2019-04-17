@@ -1,17 +1,18 @@
-#ifndef TIMER_HPP
-#define TIMER_HPP
+#ifndef SIMU_TOOLS_TIMER_HPP
+#define SIMU_TOOLS_TIMER_HPP
 
 #include <chrono>
 #include <iostream>
 
-namespace samsar {
+namespace simu {
     namespace tools {
 
         class Timer {
         public:
             void start() { start_time_ = std::chrono::high_resolution_clock::now(); }
 
-            template <typename T = std::chrono::milliseconds> double stop()
+            template <typename T = std::chrono::milliseconds>
+            double stop()
             {
                 stop_time_ = std::chrono::high_resolution_clock::now();
                 return std::chrono::duration_cast<T>(stop_time_ - start_time_).count();
@@ -23,6 +24,6 @@ namespace samsar {
         };
 
     } // namespace tools
-} // namespace samsar
+} // namespace simu
 
 #endif

@@ -1,10 +1,11 @@
-#ifndef POSITION_HPP
-#define POSITION_HPP
+#ifndef SIMU_TYPES_POSITION_HPP
+#define SIMU_TYPES_POSITION_HPP
 
-namespace samsar {
+namespace simu {
     namespace types {
 
-        template <typename T = float> struct Position {
+        template <typename T = float>
+        struct Position {
             Position() : x(0), y(0), z(0) {}
 
             T x;
@@ -13,6 +14,6 @@ namespace samsar {
         };
 
     } // namespace types
-} // namespace samsar
+} // namespace simu
 
 #endif
