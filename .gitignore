@@ -2,7 +2,7 @@ build/
 *.dat
 .idea/
 .vscode/
-animals/
+exp/
 
 # skip simulation output folders
 *_*-*-*_*_*_*

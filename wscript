@@ -1,77 +1,3 @@
-# #!/usr/bin/env python
-# # encoding: utf-8
-# import sys
-# import os
-# import fnmatch
-# import glob
-# sys.path.insert(0, sys.path[0]+'/waf_tools')
-
-# VERSION = '0.0.1'
-# APPNAME = 'fish_in_ring'
-
-# srcdir = '.'
-# incdir = 'src/'
-# blddir = 'build'
-
-# from waflib.Build import BuildContext
-# from waflib import Logs
-# import eigen
-# import boost
-
-
-# def options(opt):
-#     opt.load('compiler_cxx waf_unit_test')
-#     opt.load('eigen')
-#     opt.load('boost')
-
-
-# def configure(conf):
-#     conf.load('compiler_cxx waf_unit_test')
-#     conf.load('eigen')
-#     conf.load('boost')
-
-#     conf.check_eigen()
-#     conf.check_boost(lib='regex system filesystem', min_version='1.46')
-#     conf.env.append_value('INCLUDES', [incdir])
-
-#     # we want C++11
-#     if conf.env.CXX_NAME in ["icc", "icpc"]:
-#         common_flags = "-Wall -std=c++11"
-#         opt_flags = " -O3 -xHost -mtune=native -unroll -g"
-#     elif conf.env.CXX_NAME in ["clang"]:
-#         common_flags = "-Wall -std=c++11"
-#         opt_flags = " -O3 -march=native -g"
-#     else:
-#         if int(conf.env['CC_VERSION'][0]+conf.env['CC_VERSION'][1]) < 47:
-#             common_flags = "-Wall -std=c++0x"
-#         else:
-#             common_flags = "-Wall -std=c++11"
-#         opt_flags = " -O3 -march=native -g"
-#     common_flags += " -Wextra"
-
-#     all_flags = common_flags + opt_flags
-#     conf.env['CXXFLAGS'] = conf.env['CXXFLAGS'] + all_flags.split(' ')
-#     print(conf.env['CXXFLAGS'])
-
-#     conf.env.LIB_PARTICLE_SIMU = ['simu']
-#     conf.env.LIBPATH_PARTICLE_SIMU = [os.path.join(os.getcwd(), 'build/')]
-#     conf.env.INCLUDES_PARTICLE_SIMU = [os.path.join(os.getcwd(), 'src/')]
-
-
-# def build(bld):
-#     srcs = []
-#     incs = ['src/']
-
-#     nodes = bld.path.ant_glob('src/**/*.cpp', src=True, dir=False)
-#     for n in nodes:
-#         srcs += [n.bldpath()]
-
-#     bld.stlib(features='cxx cxxstlib',
-#               source=srcs,
-#               cxxflags=['-O3', '-fPIC', '-rdynamic'],
-#               uselib='BOOST BOOST_SYSTEM BOOST_FILESYSTEM BOOST_REGEX EIGEN',
-#               target='simu')
-
 #!/usr/bin/env python
 # encoding: utf-8
 
@@ -103,9 +29,9 @@ def options(opt):
     opt.load('eigen')
 
     opt.add_option('--create', type='string',
-                   help='create a new animal', dest='create_exp')
-    opt.add_option('--animals', type='string',
-                   help='animal(s) to build, separate by comma', dest='animal')
+                   help='create a new exp', dest='create_exp')
+    opt.add_option('--exp', type='string',
+                   help='exp(s) to build, separate by comma', dest='exp')
     opt.add_option('--examples', action='store_true', default=False,
                    help='build examples', dest='examples')
     opt.add_option('--cpp14', action='store_true', default=False,
@@ -119,7 +45,7 @@ def options(opt):
         print("build dir not created (it probably already exists, this is fine)")
     opt.logger = Logs.make_logger(blddir + '/options.log', 'optlogger')
 
-    for i in glob.glob('animals/*'):
+    for i in glob.glob('exp/*'):
         if os.path.isdir(i):
             opt.start_msg('command-line options for [%s]' % i)
             try:
@@ -175,17 +101,17 @@ def configure(conf):
     Logs.pprint('NORMAL', 'CXXFLAGS: %s' %
                 (conf.env['CXXFLAGS'] + conf.env['CXXFLAGS_OMP']))
 
-    if conf.options.animal:
-        for i in conf.options.animal.split(','):
-            Logs.pprint('NORMAL', 'configuring for animal: %s' % i)
-            conf.recurse('animal/' + i)
+    if conf.options.exp:
+        for i in conf.options.exp.split(','):
+            Logs.pprint('NORMAL', 'configuring for exp: %s' % i)
+            conf.recurse('exp/' + i)
 
 
 def build(bld):
-    if bld.options.animal:
-        for i in bld.options.animal.split(','):
-            Logs.pprint('NORMAL', 'Building animal: %s' % i)
-            bld.recurse('animals/' + i)
+    if bld.options.exp:
+        for i in bld.options.exp.split(','):
+            Logs.pprint('NORMAL', 'Building exp: %s' % i)
+            bld.recurse('exp/' + i)
 
 
 def shutdown(ctx):

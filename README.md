@@ -12,15 +12,15 @@ One can make use of the code in the src to create custom simulation loops. To do
     
     `./waf --create zebrafish_model`
     
-   You will see a new folder `animals` under which you can find your new experiment's folder `zebrafish_model`. The directory will contain a `wscript` template to help you with the compilation process.
+   You will see a new folder `exp` under which you can find your new experiment's folder `zebrafish_model`. The directory will contain a `wscript` template to help you with the compilation process.
    
 - Configure the environment for your project:
   
-   `./waf configure --animal zebrafish_model`
+   `./waf configure --exp zebrafish_model`
 
 - Compile your project:
   
-   `./waf --animal zebrafish_model`
+   `./waf --exp zebrafish_model`
    
 
 # Examples

@@ -21,19 +21,19 @@ def check_lib(self, name, path):
 
 
 def create_exp(name, opt):
-    if not os.path.exists('animals'):
-        os.makedirs('animals')
-    if os.path.exists('animals/' + name):
+    if not os.path.exists('exp'):
+        os.makedirs('exp')
+    if os.path.exists('exp/' + name):
         Logs.pprint(
             'RED', 'ERROR: experiment \'%s\' already exists. Please remove it if you want to re-create it from scratch.' % name)
         return
-    os.mkdir('animals/' + name)
+    os.mkdir('exp/' + name)
 
     ws_tpl = ""
     for line in open("waf_tools/exp_template.wscript"):
         ws_tpl += line
     ws_tpl = ws_tpl.replace('@NAME', name)
-    ws = open('animals/' + name + "/wscript", "w")
+    ws = open('exp/' + name + "/wscript", "w")
     ws.write(ws_tpl)
     ws.close()
 
