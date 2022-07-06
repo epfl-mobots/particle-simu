@@ -4,12 +4,6 @@
 namespace simu {
     namespace simulation {
 
-        Simulation::Simulation(bool stats_enabled)
-        {
-            _sim_settings.stats_enabled = stats_enabled;
-            _init();
-        }
-
         Simulation::Simulation(const Settings& settings)
         {
             _sim_settings = settings;
@@ -29,8 +23,9 @@ namespace simu {
 
         void Simulation::spin()
         {
-            for (uint64_t i = 0; i < sim_time(); ++i)
+            while (_iteration < _sim_settings.sim_time) {
                 spin_once();
+            }
         }
 
         void Simulation::spin_once() { ++_iteration; }

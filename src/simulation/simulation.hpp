@@ -11,12 +11,11 @@ namespace simu {
         struct Settings {
             uint64_t sim_time = 1000;
             bool stats_enabled = true;
-            float timestep = 1.;
+            float timestep = 0.12;
         };
 
         class Simulation {
         public:
-            Simulation(bool stats_enable = true);
             Simulation(const Settings& settings);
             virtual ~Simulation();
 

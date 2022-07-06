@@ -3,6 +3,7 @@ build/
 .idea/
 .vscode/
 exp/
+*.DS_Store
 
 # skip simulation output folders
 *_*-*-*_*_*_*
