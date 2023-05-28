@@ -4,6 +4,7 @@
 #include <descriptors/descriptor_base.hpp>
 #include <stat/stat_base.hpp>
 #include <vector>
+#include <tools/tools.hpp>
 
 namespace simu {
     namespace simulation {
