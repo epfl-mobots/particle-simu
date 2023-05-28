@@ -1,0 +1,3 @@
+[submodule "exp/burst-and-coast"]
+	path = exp/burst-and-coast
+	url = git@github.com:epfl-mobots/burst-and-coast.git
