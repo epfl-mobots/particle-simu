@@ -24,6 +24,7 @@ namespace simu {
             virtual void spin_once();
 
             const std::string& res_dir() const;
+            float timestep() const;
             uint64_t sim_time() const;
             uint64_t& sim_time();
             uint64_t iteration() const;
