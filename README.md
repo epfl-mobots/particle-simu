@@ -24,9 +24,10 @@ One can make use of the code in the src to create custom simulation loops. To do
    
 
 # Examples
-You can find an example project for burst-and-coast simulation [here](https://github.com/epfl-mobots/burst-and-coast).
+You can find an example project for burst-and-coast simulation [here](https://github.com/epfl-mobots/burst-and-coast). If you clone with `--recursive` the burst_and_coast code should already be in `exp/`.
    
+   `./waf configure --exp burst_and_coast`
    
-
+   `./waf --exp burst_and_coast`
 
 ## *__This is a work in progress, hence the limited documentation.__* 
